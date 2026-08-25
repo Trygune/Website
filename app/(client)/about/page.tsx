@@ -1,0 +1,158 @@
+import Link from 'next/link'
+import { ArrowLeft, ArrowUpRight } from 'lucide-react'
+
+const skills = [
+  'React',
+  'Next.js',
+  'TypeScript',
+  'JavaScript',
+  'Tailwind CSS',
+  'Node.js',
+  'Express.js',
+  'MongoDB',
+]
+
+const AboutPage = () => {
+  return (
+    <main className="py-16 sm:py-24">
+      {/* Back */}
+      <Link
+        href="/"
+        className="group mb-12 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
+        Back home
+      </Link>
+
+      {/* Intro */}
+      <header className="max-w-4xl">
+        <p className="mb-4 text-sm font-medium uppercase tracking-widest text-muted-foreground">
+          About me
+        </p>
+
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+          I build interfaces that are simple, useful, and thoughtfully designed.
+        </h1>
+      </header>
+
+      {/* Main content */}
+      <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_280px] lg:gap-20">
+        <div className="max-w-3xl space-y-8">
+          <section>
+            <h2 className="text-2xl font-semibold tracking-tight">
+              A little about me
+            </h2>
+
+            <div className="mt-5 space-y-5 text-base leading-8 text-muted-foreground">
+              <p>
+                I&apos;m Farbod, a front-end web developer who enjoys turning
+                ideas and designs into functional, responsive, and polished web
+                experiences.
+              </p>
+
+              <p>
+                My main focus is the React ecosystem. I work primarily with
+                React, Next.js, and TypeScript, while also exploring the backend
+                side of web development with Node.js and Express.
+              </p>
+
+              <p>
+                I care about more than just making things work. Typography,
+                spacing, accessibility, performance, responsive behavior, and
+                small interaction details are all part of how I approach
+                building a product.
+              </p>
+            </div>
+          </section>
+
+          {/* Current focus */}
+          <section>
+            <h2 className="text-2xl font-semibold tracking-tight">
+              What I&apos;m focused on
+            </h2>
+
+            <ul className="mt-5 space-y-4">
+              {[
+                'Building production-ready React and Next.js applications.',
+                'Improving my TypeScript and software architecture skills.',
+                'Learning backend development with Node.js and Express.',
+                'Building accessible and responsive user interfaces.',
+              ].map((item) => (
+                <li
+                  key={item}
+                  className="flex gap-3 text-base leading-7 text-muted-foreground"
+                >
+                  <span className="mt-3 size-1.5 shrink-0 rounded-full bg-foreground" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Skills */}
+          <section>
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Technologies
+            </h2>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {skills.map((skill) => (
+                <span
+                  key={skill}
+                  className="rounded-md border px-3 py-1.5 text-sm font-medium text-muted-foreground"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* Sidebar */}
+        <aside className="h-fit border-t pt-6 lg:border-l lg:border-t-0 lg:pl-8">
+          <dl className="space-y-6 text-sm">
+            <div>
+              <dt className="text-muted-foreground">Based</dt>
+              <dd className="mt-1 font-medium">Available remotely</dd>
+            </div>
+
+            <div>
+              <dt className="text-muted-foreground">Focus</dt>
+              <dd className="mt-1 font-medium">Front-End Development</dd>
+            </div>
+
+            <div>
+              <dt className="text-muted-foreground">Currently learning</dt>
+              <dd className="mt-1 font-medium">Backend &amp; System Design</dd>
+            </div>
+          </dl>
+        </aside>
+      </div>
+
+      {/* CTA */}
+      <section className="mt-20 border-t pt-10">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Let&apos;s build something together.
+            </h2>
+
+            <p className="mt-2 text-sm text-muted-foreground">
+              Have an idea or an opportunity? I&apos;d love to hear about it.
+            </p>
+          </div>
+
+          <Link
+            href="/contact"
+            className="group inline-flex w-fit items-center gap-2 rounded-lg bg-foreground px-5 py-3 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
+          >
+            Get in touch
+            <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </Link>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+export default AboutPage
