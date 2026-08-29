@@ -1,20 +1,25 @@
+export type ProjectStatus = 'draft' | 'published'
+
 export type Project = {
+  id: string
   title: string
+  slug: string
+  role: string
+  year: string
   description: string
-  image: string
-
+  fullDescription?: string
+  overview: string
+  features: string[]
   technologies: string[]
-
-  href: string
-  github?: string
-  live?: string
-
+  challengesSolutions: {
+    challenge: string
+    solution: string
+  }[]
+  coverImage?: string
+  githubUrl?: string
+  liveUrl?: string
   featured?: boolean
-
-  overview?: string
-  features?: string[]
-  challenges?: string
-
-  role?: string
-  year?: string
+  status: ProjectStatus
+  createdAt: string
+  updatedAt: string
 }

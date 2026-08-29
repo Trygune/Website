@@ -5,61 +5,40 @@ import { useState } from 'react'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import EmptyState from '@/components/admin/shared/EmptyState'
 import AdminPagination from '@/components/admin/shared/AdminPagination'
-import ProjectTable, {
-  type Project,
-} from '@/components/admin/projects/ProjectTable'
-
-const projects: Project[] = [
-  {
-    id: '1',
-    title: 'Habit Tracker',
-    slug: 'habit-tracker',
-    description:
-      'A modern habit tracking PWA built with Next.js and TypeScript.',
-    technologies: ['Next.js', 'TypeScript', 'Tailwind'],
-    coverImage: '',
-    githubUrl: '',
-    liveUrl: '',
-    featured: true,
-    status: 'published',
-    createdAt: '2026-08-20',
-    updatedAt: '2026-08-23',
-  },
-  {
-    id: '2',
-    title: 'Eslimi Shop',
-    slug: 'eslimi-shop',
-    description: 'An e-commerce application for wood and metal products.',
-    technologies: ['Next.js', 'Drizzle', 'PostgreSQL'],
-    coverImage: '',
-    githubUrl: '',
-    liveUrl: '',
-    featured: true,
-    status: 'published',
-    createdAt: '2026-08-15',
-    updatedAt: '2026-08-20',
-  },
-  {
-    id: '3',
-    title: 'Tax Calculator',
-    slug: 'tax-calculator',
-    description: 'A tax calculation application built with React.',
-    technologies: ['React', 'Vite', 'Redux Toolkit'],
-    coverImage: '',
-    githubUrl: '',
-    liveUrl: '',
-    featured: false,
-    status: 'draft',
-    createdAt: '2026-08-10',
-    updatedAt: '2026-08-18',
-  },
-]
+import ProjectTable from '@/components/admin/projects/ProjectTable'
+import { useDeleteProject, useProjects } from '@/hooks/useProjects'
+import { Project } from '@/types/project'
 
 const ProjectsAdminPage = () => {
+  const { data, isPending, isError } = useProjects()
+  const deleteMutation = useDeleteProject()
+  const projects = data?.data ?? []
   const hasProjects = projects.length > 0
   const [deleteProject, setDeleteProject] = useState<Project | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const totalPages = 5
+
+  if (isError) {
+    return (
+      <div className="rounded-xl border p-6">
+        <h2 className="font-semibold">Failed to load projects</h2>
+
+        <p className="mt-1 text-sm text-muted-foreground">
+          Please try again later.
+        </p>
+      </div>
+    )
+  }
+
+  if (isPending) {
+    return (
+      <div className="space-y-4">
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+        <div className="h-64 animate-pulse rounded-xl bg-muted" />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -107,7 +86,7 @@ const ProjectsAdminPage = () => {
 
               <p className="mt-1 text-3xl font-bold tracking-tight">
                 {
-                  projects.filter((project) => project.status === 'Published')
+                  projects.filter((project) => project.status === 'published')
                     .length
                 }
               </p>
@@ -118,7 +97,7 @@ const ProjectsAdminPage = () => {
 
               <p className="mt-1 text-3xl font-bold tracking-tight">
                 {
-                  projects.filter((project) => project.status === 'Draft')
+                  projects.filter((project) => project.status === 'draft')
                     .length
                 }
               </p>
@@ -152,10 +131,7 @@ const ProjectsAdminPage = () => {
             onConfirm={async () => {
               if (!deleteProject) return
 
-              // بعداً:
-              // await deleteProjectApi(deleteProject.id)
-
-              console.log('Delete project:', deleteProject.id)
+              await deleteMutation.mutateAsync(deleteProject.id)
 
               setDeleteProject(null)
             }}

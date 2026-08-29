@@ -2,20 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowUpRight, BriefcaseBusiness, Pencil, Trash2 } from 'lucide-react'
-
-export type Experience = {
-  id: string
-  position: string
-  company: string
-  location?: string
-  type?: string
-  startDate: string
-  endDate?: string
-  current?: boolean
-  description: string
-  technologies: string[]
-  companyUrl?: string
-}
+import { Experience } from '@/types/experience'
 
 type ExperienceTableProps = {
   experiences: Experience[]
@@ -63,7 +50,7 @@ const ExperienceTable = ({ experiences, onDelete }: ExperienceTableProps) => {
 
               <div className="min-w-0">
                 <h2 className="truncate text-sm font-medium">
-                  {experience.position}
+                  {experience.role}
                 </h2>
 
                 <p className="mt-1 truncate text-xs text-muted-foreground">
@@ -125,7 +112,7 @@ const ExperienceTable = ({ experiences, onDelete }: ExperienceTableProps) => {
             <div className="flex items-center justify-start gap-2 md:justify-end">
               <Link
                 href={`/admin/experience/${experience.id}`}
-                aria-label={`Edit ${experience.position}`}
+                aria-label={`Edit ${experience.role}`}
                 className="flex size-9 items-center justify-center rounded-lg border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 <Pencil className="size-4" />

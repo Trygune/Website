@@ -3,53 +3,38 @@ import Link from 'next/link'
 import { FileText, Plus, Search } from 'lucide-react'
 import EmptyState from '@/components/admin/shared/EmptyState'
 import { useState } from 'react'
-import PostTable, { type Post } from '@/components/admin/posts/PostTable'
+import PostTable from '@/components/admin/posts/PostTable'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
-
-const posts: Post[] = [
-  {
-    id: '1',
-    title: 'Building Modern React Applications',
-    slug: 'building-modern-react-applications',
-    excerpt:
-      'A practical guide to building modern React applications with a clean and scalable architecture.',
-    category: 'React',
-    tags: ['React', 'JavaScript', 'Frontend'],
-    coverImage: '',
-    published: true,
-    createdAt: '2026-08-23',
-    updatedAt: '2026-08-23',
-  },
-  {
-    id: '2',
-    title: 'What I Learned Building with Next.js',
-    slug: 'what-i-learned-building-with-nextjs',
-    excerpt: 'Lessons learned while building modern applications with Next.js.',
-    category: 'Next.js',
-    tags: ['Next.js', 'React', 'TypeScript'],
-    coverImage: '',
-    published: true,
-    createdAt: '2026-08-18',
-    updatedAt: '2026-08-18',
-  },
-  {
-    id: '3',
-    title: 'TypeScript for JavaScript Developers',
-    slug: 'typescript-for-javascript-developers',
-    excerpt:
-      'A practical introduction to TypeScript for developers coming from JavaScript.',
-    category: 'TypeScript',
-    tags: ['TypeScript', 'JavaScript'],
-    coverImage: '',
-    published: false,
-    createdAt: '2026-08-11',
-    updatedAt: '2026-08-11',
-  },
-]
+import { useDeletePost, usePosts } from '@/hooks/usePosts'
+import { Post } from '@/types/post'
 
 const PostsAdminPage = () => {
+  const { data, isPending, isError } = usePosts()
+  const deleteMutation = useDeletePost()
+  const posts = data?.data ?? []
   const hasPosts = posts.length > 0
   const [deletePost, setDeletePost] = useState<Post | null>(null)
+
+  if (isError) {
+    return (
+      <div className="rounded-xl border p-6">
+        <h2 className="font-semibold">Failed to load projects</h2>
+
+        <p className="mt-1 text-sm text-muted-foreground">
+          Please try again later.
+        </p>
+      </div>
+    )
+  }
+
+  if (isPending) {
+    return (
+      <div className="space-y-4">
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+        <div className="h-64 animate-pulse rounded-xl bg-muted" />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -94,7 +79,7 @@ const PostsAdminPage = () => {
               <p className="text-sm text-muted-foreground">Published</p>
 
               <p className="mt-1 text-3xl font-bold tracking-tight">
-                {posts.filter((post) => post.published).length}
+                {posts.filter((post) => post.publishedAt).length}
               </p>
             </div>
 
@@ -102,7 +87,7 @@ const PostsAdminPage = () => {
               <p className="text-sm text-muted-foreground">Drafts</p>
 
               <p className="mt-1 text-3xl font-bold tracking-tight">
-                {posts.filter((post) => !post.published).length}
+                {posts.filter((post) => !post.publishedAt).length}
               </p>
             </div>
           </div>
@@ -129,8 +114,7 @@ const PostsAdminPage = () => {
             onConfirm={async () => {
               if (!deletePost) return
 
-              // بعداً:
-              // await deletePostApi(deletePost.id)
+              await deleteMutation.mutateAsync(deletePost.id)
 
               console.log('Delete post:', deletePost.id)
             }}

@@ -1,88 +1,54 @@
+'use client'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import DashboardStats from '@/components/admin/dashboard/DashboardStats'
-import RecentPosts, {
-  type RecentPost,
-} from '@/components/admin/dashboard/RecentPosts'
-import RecentProjects, {
-  type RecentProject,
-} from '@/components/admin/dashboard/RecentProjects'
-
-const stats = {
-  projects: {
-    total: 3,
-    published: 2,
-    drafts: 1,
-  },
-  posts: {
-    total: 3,
-    published: 2,
-    drafts: 1,
-  },
-  experience: {
-    total: 2,
-    current: 1,
-  },
-}
-
-const recentProjects: RecentProject[] = [
-  {
-    id: '1',
-    title: 'Habit Tracker',
-    slug: 'habit-tracker',
-    technologies: ['Next.js', 'TypeScript', 'Tailwind'],
-    status: 'published',
-    featured: true,
-    updatedAt: '2026-08-23',
-  },
-  {
-    id: '2',
-    title: 'Eslimi Shop',
-    slug: 'eslimi-shop',
-    technologies: ['Next.js', 'Drizzle', 'PostgreSQL'],
-    status: 'published',
-    featured: true,
-    updatedAt: '2026-08-20',
-  },
-  {
-    id: '3',
-    title: 'Tax Calculator',
-    slug: 'tax-calculator',
-    technologies: ['React', 'Vite', 'Redux Toolkit'],
-    status: 'draft',
-    featured: false,
-    updatedAt: '2026-08-18',
-  },
-]
-
-const recentPosts: RecentPost[] = [
-  {
-    id: '1',
-    title: 'Building Modern React Applications',
-    slug: 'building-modern-react-applications',
-    category: 'React',
-    published: true,
-    updatedAt: '2026-08-23',
-  },
-  {
-    id: '2',
-    title: 'What I Learned Building with Next.js',
-    slug: 'what-i-learned-building-with-nextjs',
-    category: 'Next.js',
-    published: true,
-    updatedAt: '2026-08-18',
-  },
-  {
-    id: '3',
-    title: 'TypeScript for JavaScript Developers',
-    slug: 'typescript-for-javascript-developers',
-    category: 'TypeScript',
-    published: false,
-    updatedAt: '2026-08-11',
-  },
-]
+import RecentPosts from '@/components/admin/dashboard/RecentPosts'
+import RecentProjects from '@/components/admin/dashboard/RecentProjects'
+import { useDashboard } from '@/hooks/useDashboard'
 
 const AdminDashboardPage = () => {
+  const { data, isPending, isError } = useDashboard()
+
+  const stats = data?.data ?? {
+    projects: {
+      total: 0,
+      published: 0,
+      drafts: 0,
+    },
+    posts: {
+      total: 0,
+      published: 0,
+      drafts: 0,
+    },
+    experience: {
+      total: 0,
+      current: 0,
+    },
+    recentProjects: [],
+    recentPosts: [],
+  }
+
+  if (isError) {
+    return (
+      <div className="rounded-xl border p-6">
+        <h2 className="font-semibold">Failed to load projects</h2>
+
+        <p className="mt-1 text-sm text-muted-foreground">
+          Please try again later.
+        </p>
+      </div>
+    )
+  }
+
+  if (isPending) {
+    return (
+      <div className="space-y-4">
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+        <div className="h-64 animate-pulse rounded-xl bg-muted" />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-10">
       {/* Header */}
@@ -109,15 +75,19 @@ const AdminDashboardPage = () => {
       </div>
 
       {/* Stats */}
-      <DashboardStats stats={stats} />
+      <DashboardStats
+        projects={stats.projects}
+        posts={stats.posts}
+        experience={stats.experience}
+      />
 
       {/* Recent content */}
       <div className="grid gap-6 xl:grid-cols-2">
         {/* Projects */}
-        <RecentProjects projects={recentProjects} />
+        <RecentProjects projects={stats.recentProjects} />
 
         {/* Posts */}
-        <RecentPosts posts={recentPosts} />
+        <RecentPosts posts={stats.recentPosts} />
       </div>
     </div>
   )

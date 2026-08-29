@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Outfit, Public_Sans } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
 import ScrollToTop from '@/components/layout/ScrollToTop'
+import ReactQueryProvider from '@/provider/ReactQueryProvider'
 
 const publicSansHeading = Public_Sans({
   subsets: ['latin'],
@@ -42,7 +43,7 @@ const RootLayout = ({ children }: LayoutProps<'/'>) => {
     >
       <body className="min-h-screen">
         <ScrollToTop />
-        {children}
+        <ReactQueryProvider>{children}</ReactQueryProvider>
       </body>
     </html>
   )

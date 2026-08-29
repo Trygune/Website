@@ -1,28 +1,10 @@
+import { getExperiences } from '@/services/experiences'
 import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 
-const experiences = [
-  {
-    period: '2026',
-    role: 'Front-End Developer Intern',
-    company: 'Cultural Heritage Organization',
-    type: 'Internship',
-    description:
-      'Worked on front-end development, UI implementation, and improving user interfaces for web-based projects.',
-    technologies: ['HTML', 'CSS', 'JavaScript', 'Tailwind CSS', 'TypeScript'],
-  },
-  {
-    period: '2025 — Present',
-    role: 'Computer Science Student',
-    company: 'Computer Science',
-    type: 'Education',
-    description:
-      'Building a strong foundation in software development while focusing on modern front-end technologies and web application development.',
-    technologies: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js'],
-  },
-]
-
-const Experience = () => {
+const Experience = async () => {
+  const data = await getExperiences()
+  const experiences = data?.data.slice(0, 3) ?? []
   return (
     <section id="experience" className="scroll-mt-24 border-t py-24 sm:py-32">
       {/* Header */}

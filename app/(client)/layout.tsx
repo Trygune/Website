@@ -11,7 +11,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     <div className="min-h-screen bg-muted/30">
       <SectionNavigation />
       <Navbar />
-      <main className="w-full max-w-7xl mx-auto">{children}</main>
+      <main className="w-full max-w-7xl mx-auto px-4">{children}</main>
       <Footer />
     </div>
   )

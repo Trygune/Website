@@ -2,24 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowUpRight, Pencil, Trash2, FolderKanban } from 'lucide-react'
-
-export type ProjectStatus = 'draft' | 'published'
-
-export type Project = {
-  id: string
-  title: string
-  slug: string
-  description?: string
-  fullDescription?: string
-  technologies: string[]
-  coverImage?: string
-  githubUrl?: string
-  liveUrl?: string
-  featured: boolean
-  status: ProjectStatus
-  createdAt: string
-  updatedAt?: string
-}
+import { Project } from '@/types/project'
 
 type ProjectTableProps = {
   projects: Project[]

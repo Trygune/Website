@@ -1,17 +1,9 @@
 import Link from 'next/link'
 import { ArrowUpRight, FileText } from 'lucide-react'
-
-export type RecentPost = {
-  id: string
-  title: string
-  slug: string
-  category: string
-  published: boolean
-  updatedAt: string
-}
+import { Post } from '@/types/post'
 
 type RecentPostsProps = {
-  posts: RecentPost[]
+  posts: Post[]
 }
 
 const formatDate = (date: string) => {
@@ -67,12 +59,12 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
 
                   <span
                     className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium sm:inline-flex ${
-                      post.published
+                      post.publishedAt
                         ? 'bg-foreground/10 text-foreground'
                         : 'bg-muted text-muted-foreground'
                     }`}
                   >
-                    {post.published ? 'Published' : 'Draft'}
+                    {post.publishedAt ? 'Published' : 'Draft'}
                   </span>
                 </div>
 

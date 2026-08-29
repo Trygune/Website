@@ -1,37 +1,9 @@
 import Link from 'next/link'
 import { ArrowUpRight, CalendarDays, Clock3 } from 'lucide-react'
+import { getPosts } from '@/services/posts'
 
-const posts = [
-  {
-    slug: 'building-modern-react-apps',
-    title: 'Building Modern React Applications',
-    excerpt:
-      'A practical look at the architecture, patterns, and tools I use when building modern React applications.',
-    date: 'Aug 20, 2026',
-    readTime: '5 min read',
-    category: 'React',
-  },
-  {
-    slug: 'learning-nextjs',
-    title: 'What I Learned Building with Next.js',
-    excerpt:
-      'Notes and lessons from working with the Next.js App Router and building production-oriented applications.',
-    date: 'Aug 12, 2026',
-    readTime: '7 min read',
-    category: 'Next.js',
-  },
-  {
-    slug: 'typescript-for-javascript-developers',
-    title: 'TypeScript for JavaScript Developers',
-    excerpt:
-      'How I approached TypeScript after working primarily with JavaScript and what changed in my development workflow.',
-    date: 'Aug 05, 2026',
-    readTime: '6 min read',
-    category: 'TypeScript',
-  },
-]
-
-const BlogPage = () => {
+const BlogPage = async () => {
+  const { data: posts } = await getPosts()
   return (
     <main className="py-16 sm:py-24">
       {/* Header */}
@@ -52,45 +24,53 @@ const BlogPage = () => {
 
       {/* Posts */}
       <div className="mt-16 divide-y border-y">
-        {posts.map((post) => (
-          <article key={post.slug} className="group py-8 sm:py-10">
-            <Link
-              href={`/blog/${post.slug}`}
-              className="grid gap-6 sm:grid-cols-[160px_1fr_auto] sm:items-start"
+        {posts.map((post) => {
+          const date = post.publishedAt
+            ? new Date(post.publishedAt).toDateString()
+            : 'Unknown'
+          return (
+            <article
+              key={`${post.slug}-${post.id}`}
+              className="group py-8 sm:py-10"
             >
-              {/* Date */}
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <CalendarDays className="size-4" />
-                {post.date}
-              </div>
-
-              {/* Content */}
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-md border px-2.5 py-1 text-xs font-medium">
-                    {post.category}
-                  </span>
-
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock3 className="size-3.5" />
-                    {post.readTime}
-                  </span>
+              <Link
+                href={`/blog/${post.slug}`}
+                className="grid gap-6 sm:grid-cols-[160px_1fr_auto] sm:items-start"
+              >
+                {/* Date */}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <CalendarDays className="size-4" />
+                  {date}
                 </div>
 
-                <h2 className="mt-4 text-xl font-semibold tracking-tight transition-colors group-hover:text-muted-foreground sm:text-2xl">
-                  {post.title}
-                </h2>
+                {/* Content */}
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-md border px-2.5 py-1 text-xs font-medium">
+                      {post.category}
+                    </span>
 
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-                  {post.excerpt}
-                </p>
-              </div>
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Clock3 className="size-3.5" />
+                      {post.readTime ?? 'Few Minutes'}
+                    </span>
+                  </div>
 
-              {/* Arrow */}
-              <ArrowUpRight className="hidden size-5 text-muted-foreground transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 sm:block" />
-            </Link>
-          </article>
-        ))}
+                  <h2 className="mt-4 text-xl font-semibold tracking-tight transition-colors group-hover:text-muted-foreground sm:text-2xl">
+                    {post.title}
+                  </h2>
+
+                  <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+                    {post.excerpt}
+                  </p>
+                </div>
+
+                {/* Arrow */}
+                <ArrowUpRight className="hidden size-5 text-muted-foreground transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 sm:block" />
+              </Link>
+            </article>
+          )
+        })}
       </div>
 
       {/* Bottom */}

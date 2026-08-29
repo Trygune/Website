@@ -27,11 +27,11 @@ type DashboardStatsData = {
   }
 }
 
-type DashboardStatsProps = {
-  stats: DashboardStatsData
-}
-
-const DashboardStats = ({ stats }: DashboardStatsProps) => {
+const DashboardStats = ({
+  projects,
+  posts,
+  experience,
+}: DashboardStatsData) => {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {/* Projects */}
@@ -50,13 +50,13 @@ const DashboardStats = ({ stats }: DashboardStatsProps) => {
         <p className="mt-5 text-sm text-muted-foreground">Projects</p>
 
         <p className="mt-1 text-3xl font-bold tracking-tight">
-          {stats.projects.total}
+          {projects.total}
         </p>
 
         <div className="mt-3 flex gap-3 text-xs text-muted-foreground">
-          <span>{stats.projects.published} published</span>
+          <span>{projects.published} published</span>
 
-          <span>{stats.projects.drafts} drafts</span>
+          <span>{projects.drafts} drafts</span>
         </div>
       </Link>
 
@@ -75,14 +75,12 @@ const DashboardStats = ({ stats }: DashboardStatsProps) => {
 
         <p className="mt-5 text-sm text-muted-foreground">Blog posts</p>
 
-        <p className="mt-1 text-3xl font-bold tracking-tight">
-          {stats.posts.total}
-        </p>
+        <p className="mt-1 text-3xl font-bold tracking-tight">{posts.total}</p>
 
         <div className="mt-3 flex gap-3 text-xs text-muted-foreground">
-          <span>{stats.posts.published} published</span>
+          <span>{posts.published} published</span>
 
-          <span>{stats.posts.drafts} drafts</span>
+          <span>{posts.drafts} drafts</span>
         </div>
       </Link>
 
@@ -102,11 +100,11 @@ const DashboardStats = ({ stats }: DashboardStatsProps) => {
         <p className="mt-5 text-sm text-muted-foreground">Experience</p>
 
         <p className="mt-1 text-3xl font-bold tracking-tight">
-          {stats.experience.total}
+          {experience.total}
         </p>
 
         <p className="mt-3 text-xs text-muted-foreground">
-          {stats.experience.current} current
+          {experience.current} current
         </p>
       </Link>
     </div>

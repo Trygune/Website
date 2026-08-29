@@ -1,41 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import {
-  LayoutDashboard,
-  FolderKanban,
-  FileText,
-  BriefcaseBusiness,
-  LogOut,
-  ExternalLink,
-} from 'lucide-react'
-
-const navItems = [
-  {
-    label: 'Dashboard',
-    href: '/admin',
-    icon: LayoutDashboard,
-  },
-  {
-    label: 'Projects',
-    href: '/admin/projects',
-    icon: FolderKanban,
-  },
-  {
-    label: 'Blog',
-    href: '/admin/posts',
-    icon: FileText,
-  },
-  {
-    label: 'Experience',
-    href: '/admin/experience',
-    icon: BriefcaseBusiness,
-  },
-]
+import { usePathname, useRouter } from 'next/navigation'
+import { LogOut, ExternalLink } from 'lucide-react'
+import { logout } from '@/services/auth'
+import { navItems } from './NaviItems'
 
 const AdminSidebar = () => {
   const pathname = usePathname()
+  const router = useRouter()
 
   const isActive = (href: string) => {
     if (href === '/admin') {
@@ -43,6 +16,11 @@ const AdminSidebar = () => {
     }
 
     return pathname.startsWith(href)
+  }
+
+  const handleLogout = async () => {
+    await logout()
+    router.push('/')
   }
 
   return (
@@ -106,6 +84,7 @@ const AdminSidebar = () => {
 
         <button
           type="button"
+          onClick={handleLogout}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           <LogOut className="size-4" />

@@ -1,7 +1,29 @@
+'use client'
+
 import Link from 'next/link'
 import { ArrowLeft, LockKeyhole } from 'lucide-react'
+import { login } from '@/services/auth'
+import { SubmitEvent } from 'react'
+import { useRouter } from 'next/navigation'
 
 const AdminLoginPage = () => {
+  const router = useRouter()
+
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    try {
+      const data = await login(email, password)
+      if (data.success) {
+        router.push('/admin')
+      }
+    } catch (error) {
+      console.error('Login failed:', error)
+    }
+  }
+
   return (
     <main className="flex min-h-screen items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
@@ -28,7 +50,7 @@ const AdminLoginPage = () => {
         </div>
 
         {/* Form */}
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleSubmit} method="POST">
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium">
               Email

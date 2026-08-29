@@ -1,18 +1,9 @@
 import Link from 'next/link'
 import { ArrowUpRight, FolderKanban } from 'lucide-react'
-
-export type RecentProject = {
-  id: string
-  title: string
-  slug: string
-  technologies: string[]
-  status: 'draft' | 'published'
-  featured: boolean
-  updatedAt: string
-}
+import { Project } from '@/types/project'
 
 type RecentProjectsProps = {
-  projects: RecentProject[]
+  projects: Project[]
 }
 
 const formatDate = (date: string) => {

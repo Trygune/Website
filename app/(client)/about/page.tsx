@@ -1,18 +1,14 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 
-const skills = [
-  'React',
-  'Next.js',
-  'TypeScript',
-  'JavaScript',
-  'Tailwind CSS',
-  'Node.js',
-  'Express.js',
-  'MongoDB',
-]
+import { getSkills } from '@/services/skills'
 
-const AboutPage = () => {
+const AboutPage = async () => {
+  // const { data: skills } = await getSkills({
+  //   featured: true,
+  // })
+  const { data: skills } = await getSkills()
+
   return (
     <main className="py-16 sm:py-24">
       {/* Back */}
@@ -37,7 +33,8 @@ const AboutPage = () => {
 
       {/* Main content */}
       <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_280px] lg:gap-20">
-        <div className="max-w-3xl space-y-8">
+        <div className="max-w-3xl space-y-12">
+          {/* About */}
           <section>
             <h2 className="text-2xl font-semibold tracking-tight">
               A little about me
@@ -89,22 +86,67 @@ const AboutPage = () => {
             </ul>
           </section>
 
-          {/* Skills */}
+          {/* Featured skills */}
           <section>
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Technologies
-            </h2>
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  Technologies
+                </h2>
 
-            <div className="mt-5 flex flex-wrap gap-2">
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Some of the technologies I work with most often.
+                </p>
+              </div>
+
+              <Link
+                href="/skills"
+                className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium sm:inline-flex"
+              >
+                View all
+                <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="rounded-md border px-3 py-1.5 text-sm font-medium text-muted-foreground"
+                <div
+                  key={skill.id}
+                  className="group rounded-xl border p-4 transition-colors hover:bg-muted/30"
                 >
-                  {skill}
-                </span>
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="font-medium">{skill.name}</p>
+
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {skill.category}
+                      </p>
+                    </div>
+
+                    <span className="text-xs text-muted-foreground">
+                      {skill.percent}%
+                    </span>
+                  </div>
+
+                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-foreground transition-all"
+                      style={{
+                        width: `${skill.percent}%`,
+                      }}
+                    />
+                  </div>
+                </div>
               ))}
             </div>
+
+            <Link
+              href="/skills"
+              className="group mt-5 inline-flex items-center gap-1.5 text-sm font-medium sm:hidden"
+            >
+              View all skills
+              <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
           </section>
         </div>
 
@@ -113,16 +155,19 @@ const AboutPage = () => {
           <dl className="space-y-6 text-sm">
             <div>
               <dt className="text-muted-foreground">Based</dt>
+
               <dd className="mt-1 font-medium">Available remotely</dd>
             </div>
 
             <div>
               <dt className="text-muted-foreground">Focus</dt>
+
               <dd className="mt-1 font-medium">Front-End Development</dd>
             </div>
 
             <div>
               <dt className="text-muted-foreground">Currently learning</dt>
+
               <dd className="mt-1 font-medium">Backend &amp; System Design</dd>
             </div>
           </dl>

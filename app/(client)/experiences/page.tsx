@@ -1,40 +1,9 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
+import { getExperiences } from '@/services/experiences'
 
-const experiences = [
-  {
-    period: '2026',
-    role: 'Front-End Developer Intern',
-    company: 'Cultural Heritage Organization',
-    type: 'Internship',
-    description:
-      'Worked on front-end development and UI implementation for web-based projects. Focused on translating designs into responsive interfaces and improving the overall user experience.',
-    responsibilities: [
-      'Implemented responsive user interfaces.',
-      'Worked with modern CSS and utility-first styling.',
-      'Built interactive web interfaces using JavaScript.',
-      'Applied UI/UX principles to improve usability.',
-    ],
-    technologies: ['HTML', 'CSS', 'JavaScript', 'Tailwind CSS', 'TypeScript'],
-  },
-  {
-    period: '2025 — Present',
-    role: 'Computer Science Student',
-    company: 'Computer Science',
-    type: 'Education',
-    description:
-      'Developing a strong foundation in software engineering while focusing on modern web development and building real-world projects.',
-    responsibilities: [
-      'Studying software engineering fundamentals.',
-      'Building projects with modern web technologies.',
-      'Exploring frontend architecture and best practices.',
-      'Learning backend development and databases.',
-    ],
-    technologies: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js'],
-  },
-]
-
-const ExperiencePage = () => {
+const ExperiencePage = async () => {
+  const { data: experiences } = await getExperiences()
   return (
     <main className="py-16 sm:py-24">
       {/* Back */}
@@ -70,12 +39,12 @@ const ExperiencePage = () => {
         <div className="space-y-16">
           {experiences.map((experience) => (
             <article
-              key={`${experience.company}-${experience.role}`}
+              key={`${experience.id}-${experience.company}-${experience.role}`}
               className="relative sm:grid sm:grid-cols-[180px_1fr] sm:gap-10"
             >
               {/* Period */}
               <div className="mb-5 text-sm font-medium text-muted-foreground sm:mb-0 sm:pl-7">
-                {experience.period}
+                {experience.period ?? 'Unknown'}
               </div>
 
               {/* Timeline dot */}
@@ -100,7 +69,7 @@ const ExperiencePage = () => {
                 </div>
 
                 <p className="mt-6 text-base leading-8 text-muted-foreground">
-                  {experience.description}
+                  {experience.description ?? 'Unknown'}
                 </p>
 
                 {/* Responsibilities */}

@@ -23,6 +23,8 @@ const ProjectCard = ({
   live,
   featured = false,
 }: ProjectCardProps) => {
+  console.log(image)
+
   return (
     <article className={featured ? 'lg:col-span-2' : ''}>
       {/* Preview */}
@@ -95,7 +97,7 @@ const ProjectCard = ({
         <div className="mt-4 flex flex-wrap gap-2">
           {technologies.map((technology) => (
             <span
-              key={technology}
+              key={`ProjectCard-${technology}`}
               className="rounded-md border px-2.5 py-1 text-xs font-medium text-muted-foreground"
             >
               {technology}

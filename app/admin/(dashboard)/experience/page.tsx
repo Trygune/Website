@@ -3,47 +3,40 @@ import Link from 'next/link'
 import { BriefcaseBusiness, Plus } from 'lucide-react'
 import EmptyState from '@/components/admin/shared/EmptyState'
 import { useState } from 'react'
-import ExperienceTable, {
-  type Experience,
-} from '@/components/admin/experience/ExperienceTable'
+import ExperienceTable from '@/components/admin/experiences/ExperienceTable'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
-
-const experiences: Experience[] = [
-  {
-    id: '1',
-    position: 'Front-End Developer Intern',
-    company: 'Cultural Heritage Organization',
-    location: 'Iran',
-    type: 'Internship',
-    startDate: '2026-05',
-    endDate: '2026-07',
-    current: false,
-    description:
-      'Worked on frontend development, UI implementation, and learning modern frontend technologies.',
-    technologies: ['HTML', 'CSS', 'JavaScript', 'Tailwind CSS'],
-    companyUrl: '',
-  },
-  {
-    id: '2',
-    position: 'Computer Science Student',
-    company: 'Computer Science',
-    location: 'University',
-    type: 'Education',
-    startDate: '2025-09',
-    endDate: undefined,
-    current: true,
-    description:
-      'Studying computer science with a focus on software development and web technologies.',
-    technologies: ['Programming', 'Web Development'],
-    companyUrl: '',
-  },
-]
+import { useDeleteExperience, useExperiences } from '@/hooks/useExperiences'
+import { Experience } from '@/types/experience'
 
 const ExperienceAdminPage = () => {
+  const { data, isPending, isError } = useExperiences()
+  const deleteMutation = useDeleteExperience()
+  const experiences = data?.data ?? []
+  const hasExperiences = experiences.length > 0
   const [deleteExperience, setDeleteExperience] = useState<Experience | null>(
     null
   )
-  const hasExperiences = experiences.length > 0
+
+  if (isError) {
+    return (
+      <div className="rounded-xl border p-6">
+        <h2 className="font-semibold">Failed to load projects</h2>
+
+        <p className="mt-1 text-sm text-muted-foreground">
+          Please try again later.
+        </p>
+      </div>
+    )
+  }
+
+  if (isPending) {
+    return (
+      <div className="space-y-4">
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+        <div className="h-64 animate-pulse rounded-xl bg-muted" />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -109,15 +102,14 @@ const ExperienceAdminPage = () => {
             description="This experience will be permanently removed from your portfolio."
             itemName={
               deleteExperience
-                ? `${deleteExperience.position} at ${deleteExperience.company}`
+                ? `${deleteExperience.role} at ${deleteExperience.company}`
                 : undefined
             }
             onClose={() => setDeleteExperience(null)}
             onConfirm={async () => {
               if (!deleteExperience) return
 
-              // بعداً:
-              // await deleteExperienceApi(deleteExperience.id)
+              await deleteMutation.mutateAsync(deleteExperience.id)
 
               console.log('Delete experience:', deleteExperience.id)
             }}

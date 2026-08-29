@@ -1,45 +1,25 @@
 'use client'
 
 import Link from 'next/link'
-import {
-  X,
-  LayoutDashboard,
-  FolderKanban,
-  FileText,
-  BriefcaseBusiness,
-  LogOut,
-} from 'lucide-react'
+import { X, LogOut } from 'lucide-react'
+import { logout } from '@/services/auth'
+import { useRouter } from 'next/navigation'
+import { navItems } from './NaviItems'
 
 type AdminMobileMenuProps = {
   open: boolean
   onClose: () => void
 }
 
-const navItems = [
-  {
-    label: 'Dashboard',
-    href: '/admin',
-    icon: LayoutDashboard,
-  },
-  {
-    label: 'Projects',
-    href: '/admin/projects',
-    icon: FolderKanban,
-  },
-  {
-    label: 'Blog',
-    href: '/admin/posts',
-    icon: FileText,
-  },
-  {
-    label: 'Experience',
-    href: '/admin/experience',
-    icon: BriefcaseBusiness,
-  },
-]
-
 const AdminMobileMenu = ({ open, onClose }: AdminMobileMenuProps) => {
+  const router = useRouter()
+
   if (!open) return null
+
+  const handleLogout = async () => {
+    await logout()
+    router.push('/')
+  }
 
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
@@ -100,6 +80,7 @@ const AdminMobileMenu = ({ open, onClose }: AdminMobileMenuProps) => {
         <div className="border-t p-3">
           <button
             type="button"
+            onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <LogOut className="size-4" />

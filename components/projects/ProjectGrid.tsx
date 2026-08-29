@@ -1,25 +1,28 @@
+import { Project } from '@/types/project'
 import ProjectCard from './ProjectCard'
-
-export type Project = {
-  title: string
-  description: string
-  image: string
-  technologies: string[]
-  href: string
-  github?: string
-  live?: string
-  featured?: boolean
-}
 
 type ProjectGridProps = {
   projects: Project[]
+  page?: 'main' | 'full'
 }
 
-const ProjectGrid = ({ projects }: ProjectGridProps) => {
+const ProjectGrid = ({ projects, page = 'full' }: ProjectGridProps) => {
   return (
     <div className="grid gap-12 lg:grid-cols-2">
-      {projects.map((project) => (
-        <ProjectCard key={project.title} {...project} />
+      {projects.map((project, index) => (
+        <ProjectCard
+          key={`${project.slug}-${project.id}-${index}`}
+          title={project.title}
+          description={project.description}
+          image={`${process.env.NEXT_PUBLIC_API_URL}${project.coverImage ?? '/uploads/images/sample.jpg'}`}
+          technologies={project.technologies}
+          href={`/projects/${project.slug}`}
+          github={project.githubUrl}
+          live={project.liveUrl}
+          featured={
+            page === 'main' ? (index > 0 ? false : true) : project.featured
+          }
+        />
       ))}
     </div>
   )

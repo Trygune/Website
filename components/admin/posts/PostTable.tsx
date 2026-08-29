@@ -2,19 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowUpRight, FileText, Pencil, Trash2 } from 'lucide-react'
-
-export type Post = {
-  id: string
-  title: string
-  slug: string
-  excerpt?: string
-  category: string
-  tags: string[]
-  coverImage?: string
-  published: boolean
-  createdAt: string
-  updatedAt?: string
-}
+import { Post } from '@/types/post'
 
 type PostTableProps = {
   posts: Post[]
@@ -96,12 +84,12 @@ const PostTable = ({ posts, onDelete }: PostTableProps) => {
             <div>
               <span
                 className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                  post.published
+                  post.publishedAt
                     ? 'bg-foreground/10 text-foreground'
                     : 'bg-muted text-muted-foreground'
                 }`}
               >
-                {post.published ? 'Published' : 'Draft'}
+                {post.publishedAt ? 'Published' : 'Draft'}
               </span>
             </div>
 
@@ -124,7 +112,7 @@ const PostTable = ({ posts, onDelete }: PostTableProps) => {
                 <Trash2 className="size-4" />
               </button>
 
-              {post.published && (
+              {post.publishedAt && (
                 <Link
                   href={`/blog/${post.slug}`}
                   target="_blank"

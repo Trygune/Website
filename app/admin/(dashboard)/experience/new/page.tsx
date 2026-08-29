@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
-import ExperienceForm from '@/components/admin/experience/ExperienceForm'
+import ExperienceForm from '@/components/admin/experiences/ExperienceForm'
 
 const NewExperiencePage = () => {
   return (

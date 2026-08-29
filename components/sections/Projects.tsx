@@ -1,33 +1,11 @@
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import ProjectGrid from '../projects/ProjectGrid'
-import { Project } from '@/types/project'
+import { getProjects } from '@/services/projects'
 
-const projects: Project[] = [
-  {
-    title: 'Habit Tracker',
-    description:
-      'A modern habit tracking PWA focused on simplicity, offline support, and a smooth user experience.',
-    image: '/images/projects/habit-tracker.webp',
-    technologies: ['Next.js', 'TypeScript', 'Tailwind', 'PWA'],
-    href: '/projects/habit-tracker',
-    github: 'https://github.com',
-    live: 'https://example.com',
-    featured: true,
-  },
-  {
-    title: 'Eslimi Shop',
-    description:
-      'A modern e-commerce application for selling wood and metal products.',
-    image: '/images/projects/eslimi-shop.webp',
-    technologies: ['Next.js', 'TypeScript', 'Drizzle', 'PostgreSQL'],
-    href: '/projects/eslimi-shop',
-    github: 'https://github.com',
-    live: 'https://example.com',
-  },
-]
-
-const Projects = () => {
+const Projects = async () => {
+  const data = await getProjects()
+  const projects = data?.data.slice(0, 3) ?? []
   return (
     <section id="projects" className="scroll-mt-24 border-t py-24 sm:py-32">
       {/* Header */}
@@ -57,7 +35,7 @@ const Projects = () => {
       </div>
 
       {/* Projects */}
-      <ProjectGrid projects={projects} />
+      <ProjectGrid projects={projects} page="main" />
     </section>
   )
 }

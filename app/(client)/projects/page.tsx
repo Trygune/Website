@@ -2,43 +2,11 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 import ProjectGrid from '@/components/projects/ProjectGrid'
-import type { Project } from '@/types/project'
+import { getProjects } from '@/services/projects'
 
-const projects: Project[] = [
-  {
-    title: 'Habit Tracker',
-    description:
-      'A modern habit tracking PWA focused on simplicity, offline support, and a smooth user experience.',
-    image: '/images/projects/habit-tracker.webp',
-    technologies: ['Next.js', 'TypeScript', 'Tailwind CSS', 'PWA'],
-    href: '/projects/habit-tracker',
-    github: 'https://github.com',
-    live: 'https://example.com',
-    featured: true,
-  },
-  {
-    title: 'Eslimi Shop',
-    description:
-      'A modern e-commerce application for selling wood and metal products with a responsive shopping experience.',
-    image: '/images/projects/eslimi-shop.webp',
-    technologies: ['Next.js', 'TypeScript', 'Drizzle', 'PostgreSQL'],
-    href: '/projects/eslimi-shop',
-    github: 'https://github.com',
-    live: 'https://example.com',
-  },
-  {
-    title: 'Tax Calculator',
-    description:
-      'A responsive web application for calculating and visualizing tax-related data with a clean interface.',
-    image: '/images/projects/tax-app.webp',
-    technologies: ['React', 'Vite', 'TypeScript', 'Redux Toolkit'],
-    href: '/projects/tax-calculator',
-    github: 'https://github.com',
-    live: 'https://example.com',
-  },
-]
+const ProjectsPage = async () => {
+  const { data: projects } = await getProjects()
 
-const ProjectsPage = () => {
   return (
     <main className="py-16 sm:py-24">
       {/* Back */}
