@@ -1,5 +1,6 @@
 import { Experience } from '@/types/experience'
 import { api } from './api'
+import { buildQuery } from '@/lib/build-query'
 
 type ExperiencesResponse = {
   success: boolean
@@ -11,8 +12,18 @@ type ExperienceResponse = {
   data: Experience
 }
 
-export const getExperiences = (): Promise<ExperiencesResponse> => {
-  return api<ExperiencesResponse>('/experiences')
+export type ExperienceQuery = {
+  current?: boolean
+  type?: string
+  location?: string
+  role?: string
+  technologies?: string[]
+}
+
+export const getExperiences = (
+  query?: ExperienceQuery
+): Promise<ExperiencesResponse> => {
+  return api<ExperiencesResponse>(`/experiences${buildQuery(query)}`)
 }
 
 export const createExperience = (

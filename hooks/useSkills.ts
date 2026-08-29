@@ -4,6 +4,7 @@ import {
   createSkill,
   deleteSkill,
   getSkills,
+  SkillQuery,
   updateSkill,
 } from '@/services/skills'
 import { Skill } from '@/types/skill'
@@ -11,8 +12,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const SKILLS_QUERY_KEY = ['skills'] as const
 
-export const useSkills = () => {
-  return useQuery({ queryKey: SKILLS_QUERY_KEY, queryFn: getSkills })
+export const useSkills = (query?: SkillQuery) => {
+  return useQuery({
+    queryKey: [SKILLS_QUERY_KEY, query],
+    queryFn: () => getSkills(query),
+  })
 }
 
 export const useCreateSkill = () => {

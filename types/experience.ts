@@ -13,7 +13,6 @@ export type Experience = {
   description: string
   responsibilities: string[]
   location: string
-  position: string
   companyUrl: string
   createdAt: string
   updatedAt: string

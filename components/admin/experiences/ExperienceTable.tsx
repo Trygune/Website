@@ -120,7 +120,7 @@ const ExperienceTable = ({ experiences, onDelete }: ExperienceTableProps) => {
 
               <button
                 type="button"
-                aria-label={`Delete ${experience.position}`}
+                aria-label={`Delete ${experience.role}`}
                 onClick={() => onDelete(experience)}
                 className="flex size-9 items-center justify-center rounded-lg border text-muted-foreground transition-colors hover:bg-muted hover:text-destructive"
               >

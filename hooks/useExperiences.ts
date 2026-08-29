@@ -3,6 +3,7 @@
 import {
   createExperience,
   deleteExperience,
+  ExperienceQuery,
   getExperiences,
   updateExperience,
 } from '@/services/experiences'
@@ -11,8 +12,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const EXPERIENCES_QUERY_KEY = ['experiences'] as const
 
-export const useExperiences = () => {
-  return useQuery({ queryKey: EXPERIENCES_QUERY_KEY, queryFn: getExperiences })
+export const useExperiences = (query?: ExperienceQuery) => {
+  return useQuery({
+    queryKey: [EXPERIENCES_QUERY_KEY, query],
+    queryFn: () => getExperiences(query),
+  })
 }
 
 export const useCreateExperience = () => {

@@ -1,5 +1,6 @@
 import { Post } from '@/types/post'
 import { api } from './api'
+import { buildQuery } from '@/lib/build-query'
 
 type PostsResponse = {
   success: boolean
@@ -11,8 +12,14 @@ type PostResponse = {
   data: Post
 }
 
-export const getPosts = (): Promise<PostsResponse> => {
-  return api<PostsResponse>('/posts')
+export type PostQuery = {
+  status?: Post['status']
+  category?: string
+  tags?: string[]
+}
+
+export const getPosts = (query?: PostQuery): Promise<PostsResponse> => {
+  return api<PostsResponse>(`/posts${buildQuery(query)}`)
 }
 
 export const getPostBySlug = (slug: string): Promise<PostResponse> => {

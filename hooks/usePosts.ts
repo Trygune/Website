@@ -5,6 +5,7 @@ import {
   deletePost,
   getPostBySlug,
   getPosts,
+  PostQuery,
   updatePost,
 } from '@/services/posts'
 import { Post } from '@/types/post'
@@ -12,8 +13,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const POSTS_QUERY_KEY = ['posts'] as const
 
-export const usePosts = () => {
-  return useQuery({ queryKey: POSTS_QUERY_KEY, queryFn: getPosts })
+export const usePosts = (query?: PostQuery) => {
+  return useQuery({
+    queryKey: [POSTS_QUERY_KEY, query],
+    queryFn: () => getPosts(query),
+  })
 }
 
 export const usePostBySlug = (slug: string) => {

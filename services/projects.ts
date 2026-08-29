@@ -1,5 +1,6 @@
 import { Project } from '@/types/project'
 import { api } from './api'
+import { buildQuery } from '@/lib/build-query'
 
 type ProjectsResponse = {
   success: boolean
@@ -11,8 +12,18 @@ type ProjectResponse = {
   data: Project
 }
 
-export const getProjects = (): Promise<ProjectsResponse> => {
-  return api<ProjectsResponse>('/projects')
+export type ProjectQuery = {
+  featured?: boolean
+  status?: Project['status']
+  role?: string
+  year?: string
+  technologies?: string[]
+}
+
+export const getProjects = (
+  query?: ProjectQuery
+): Promise<ProjectsResponse> => {
+  return api<ProjectsResponse>(`/projects${buildQuery(query)}`)
 }
 
 export const getProjectBySlug = (slug: string): Promise<ProjectResponse> => {

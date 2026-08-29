@@ -4,10 +4,9 @@ import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import { getSkills } from '@/services/skills'
 
 const AboutPage = async () => {
-  // const { data: skills } = await getSkills({
-  //   featured: true,
-  // })
-  const { data: skills } = await getSkills()
+  const { data: skills } = await getSkills({
+    featured: true,
+  })
 
   return (
     <main className="py-16 sm:py-24">
