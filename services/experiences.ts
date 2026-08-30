@@ -1,10 +1,12 @@
 import { Experience } from '@/types/experience'
 import { api } from './api'
 import { buildQuery } from '@/lib/build-query'
+import { Pagination } from '@/types/pagination'
 
 type ExperiencesResponse = {
   success: boolean
   data: Experience[]
+  pagination: Pagination
 }
 
 type ExperienceResponse = {
@@ -13,11 +15,14 @@ type ExperienceResponse = {
 }
 
 export type ExperienceQuery = {
+  page?: number
+  limit?: number
+  sort?: string
   current?: boolean
   type?: string
   location?: string
   role?: string
-  technologies?: string[]
+  technologies?: string
 }
 
 export const getExperiences = (

@@ -9,7 +9,12 @@ import {
   updatePost,
 } from '@/services/posts'
 import { Post } from '@/types/post'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 
 export const POSTS_QUERY_KEY = ['posts'] as const
 
@@ -17,6 +22,7 @@ export const usePosts = (query?: PostQuery) => {
   return useQuery({
     queryKey: [POSTS_QUERY_KEY, query],
     queryFn: () => getPosts(query),
+    placeholderData: keepPreviousData,
   })
 }
 

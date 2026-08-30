@@ -4,7 +4,9 @@ import ProjectGrid from '../projects/ProjectGrid'
 import { getProjects } from '@/services/projects'
 
 const Projects = async () => {
-  const data = await getProjects()
+  const data = await getProjects({
+    status: 'published',
+  })
   const projects = data?.data.slice(0, 3) ?? []
   return (
     <section id="projects" className="scroll-mt-24 border-t py-24 sm:py-32">

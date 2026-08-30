@@ -1,10 +1,12 @@
 import { Post } from '@/types/post'
 import { api } from './api'
 import { buildQuery } from '@/lib/build-query'
+import { Pagination } from '@/types/pagination'
 
 type PostsResponse = {
   success: boolean
   data: Post[]
+  pagination: Pagination
 }
 
 type PostResponse = {
@@ -13,9 +15,12 @@ type PostResponse = {
 }
 
 export type PostQuery = {
+  page?: number
+  limit?: number
+  sort?: string
   status?: Post['status']
   category?: string
-  tags?: string[]
+  tags?: string
 }
 
 export const getPosts = (query?: PostQuery): Promise<PostsResponse> => {

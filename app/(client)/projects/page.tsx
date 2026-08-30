@@ -3,9 +3,22 @@ import { ArrowLeft } from 'lucide-react'
 
 import ProjectGrid from '@/components/projects/ProjectGrid'
 import { getProjects } from '@/services/projects'
+import Pagination from '@/components/shared/Pagination'
 
-const ProjectsPage = async () => {
-  const { data: projects } = await getProjects()
+type ProjectPageProps = {
+  searchParams: Promise<{
+    page?: string
+  }>
+}
+
+const ProjectsPage = async ({ searchParams }: ProjectPageProps) => {
+  const { page } = await searchParams
+  const currentPage = Number(page) || 1
+  const { data: projects, pagination } = await getProjects({
+    page: currentPage,
+    limit: 6,
+    status: 'published',
+  })
 
   return (
     <main className="py-16 sm:py-24">
@@ -35,9 +48,11 @@ const ProjectsPage = async () => {
       </header>
 
       {/* Projects */}
-      <section className="mt-16">
+      <section className="my-16">
         <ProjectGrid projects={projects} />
       </section>
+
+      <Pagination pagination={pagination} baseUrl="/projects" />
     </main>
   )
 }

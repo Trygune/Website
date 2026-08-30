@@ -4,10 +4,10 @@ import { FolderKanban, Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import EmptyState from '@/components/admin/shared/EmptyState'
-import AdminPagination from '@/components/admin/shared/AdminPagination'
 import ProjectTable from '@/components/admin/projects/ProjectTable'
 import { useDeleteProject, useProjects } from '@/hooks/useProjects'
 import { Project } from '@/types/project'
+import Pagination from '@/components/shared/Pagination'
 
 const ProjectsAdminPage = () => {
   const { data, isPending, isError } = useProjects()
@@ -117,7 +117,7 @@ const ProjectsAdminPage = () => {
 
           {/* Projects */}
           <ProjectTable projects={projects} onDelete={setDeleteProject} />
-          <AdminPagination
+          <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}

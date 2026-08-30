@@ -9,7 +9,12 @@ import {
   updateProject,
 } from '@/services/projects'
 import { Project } from '@/types/project'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 
 export const PROJECTS_QUERY_KEY = ['projects'] as const
 
@@ -17,6 +22,7 @@ export const useProjects = (query?: ProjectQuery) => {
   return useQuery({
     queryKey: [PROJECTS_QUERY_KEY, query],
     queryFn: () => getProjects(query),
+    placeholderData: keepPreviousData,
   })
 }
 

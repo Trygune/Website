@@ -6,9 +6,9 @@ import { useState } from 'react'
 
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import EmptyState from '@/components/admin/shared/EmptyState'
-import AdminPagination from '@/components/admin/shared/AdminPagination'
 import { useDeleteSkill, useSkills } from '@/hooks/useSkills'
 import type { Skill } from '@/types/skill'
+import Pagination from '@/components/shared/Pagination'
 
 const SkillsAdminPage = () => {
   const { data, isPending, isError } = useSkills()
@@ -244,7 +244,7 @@ const SkillsAdminPage = () => {
           </div>
 
           {/* Pagination */}
-          <AdminPagination
+          <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}

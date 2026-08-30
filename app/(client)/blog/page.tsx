@@ -1,9 +1,23 @@
 import Link from 'next/link'
 import { ArrowUpRight, CalendarDays, Clock3 } from 'lucide-react'
 import { getPosts } from '@/services/posts'
+import Pagination from '@/components/shared/Pagination'
 
-const BlogPage = async () => {
-  const { data: posts } = await getPosts()
+type BlogPageProps = {
+  searchParams: Promise<{
+    page?: string
+  }>
+}
+
+const BlogPage = async ({ searchParams }: BlogPageProps) => {
+  const { page } = await searchParams
+  const currentPage = Number(page) || 1
+  const { data: posts, pagination } = await getPosts({
+    page: currentPage,
+    limit: 6,
+    status: 'published',
+  })
+
   return (
     <main className="py-16 sm:py-24">
       {/* Header */}
@@ -74,9 +88,13 @@ const BlogPage = async () => {
       </div>
 
       {/* Bottom */}
-      <div className="mt-8 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{posts.length} articles</p>
+      <div className="mt-8 mb-16 flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          {pagination.total} articles
+        </p>
       </div>
+
+      <Pagination pagination={pagination} baseUrl="/blog" />
     </main>
   )
 }

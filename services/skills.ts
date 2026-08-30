@@ -13,6 +13,7 @@ type SkillResponse = {
 }
 
 export type SkillQuery = {
+  sort?: string
   featured?: boolean
   category?: string
   level?: Skill['level']
