@@ -5,10 +5,9 @@ import {
   deleteProject,
   getProjectBySlug,
   getProjects,
-  ProjectQuery,
   updateProject,
 } from '@/services/projects'
-import { Project } from '@/types/project'
+import { Project, ProjectQuery } from '@/types/project'
 import {
   keepPreviousData,
   useMutation,

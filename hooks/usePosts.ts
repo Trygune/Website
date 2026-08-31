@@ -5,10 +5,9 @@ import {
   deletePost,
   getPostBySlug,
   getPosts,
-  PostQuery,
   updatePost,
 } from '@/services/posts'
-import { Post } from '@/types/post'
+import { Post, PostQuery } from '@/types/post'
 import {
   keepPreviousData,
   useMutation,

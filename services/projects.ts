@@ -1,4 +1,4 @@
-import { Project } from '@/types/project'
+import { Project, ProjectQuery } from '@/types/project'
 import { api } from './api'
 import { buildQuery } from '@/lib/build-query'
 import { Pagination } from '@/types/pagination'
@@ -12,17 +12,6 @@ type ProjectsResponse = {
 type ProjectResponse = {
   success: boolean
   data: Project
-}
-
-export type ProjectQuery = {
-  page?: number
-  limit?: number
-  sort?: string
-  featured?: boolean
-  status?: Project['status']
-  role?: string
-  year?: string
-  technologies?: string
 }
 
 export const getProjects = (

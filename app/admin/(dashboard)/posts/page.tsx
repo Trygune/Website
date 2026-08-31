@@ -23,7 +23,7 @@ const PostsAdminPage = () => {
     data: statData,
     isPending: statIsPending,
     isError: statIsError,
-  } = useDashboard()
+  } = useDashboard({ categories: 'posts' })
   const deleteMutation = useDeletePost()
   const posts = data?.data ?? []
   const pagination = data?.pagination

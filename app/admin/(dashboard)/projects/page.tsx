@@ -23,7 +23,7 @@ const ProjectsAdminPage = () => {
     data: statData,
     isPending: statIsPending,
     isError: statIsError,
-  } = useDashboard()
+  } = useDashboard({ categories: 'projects' })
   const deleteMutation = useDeleteProject()
   const projects = data?.data ?? []
   const pagination = data?.pagination

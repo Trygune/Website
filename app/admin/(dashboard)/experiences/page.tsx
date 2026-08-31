@@ -23,7 +23,7 @@ const ExperienceAdminPage = () => {
     data: statData,
     isPending: statIsPending,
     isError: statIsError,
-  } = useDashboard()
+  } = useDashboard({ categories: 'experience' })
   const deleteMutation = useDeleteExperience()
   const experiences = data?.data ?? []
   const pagination = data?.pagination

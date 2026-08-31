@@ -1,6 +1,10 @@
 import { Post } from './post'
 import { Project } from './project'
 
+export type DashboardQuery = {
+  categories?: string
+}
+
 export type DashboardResponse = {
   success: boolean
   data: {

@@ -4,10 +4,9 @@ import {
   createSkill,
   deleteSkill,
   getSkills,
-  SkillQuery,
   updateSkill,
 } from '@/services/skills'
-import { Skill } from '@/types/skill'
+import { Skill, SkillQuery } from '@/types/skill'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const SKILLS_QUERY_KEY = ['skills'] as const

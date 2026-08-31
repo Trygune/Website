@@ -17,3 +17,14 @@ export type Experience = {
   createdAt: string
   updatedAt: string
 }
+
+export type ExperienceQuery = {
+  page?: number
+  limit?: number
+  sort?: string
+  current?: boolean
+  type?: Experience['type']
+  location?: string
+  role?: string
+  technologies?: string
+}

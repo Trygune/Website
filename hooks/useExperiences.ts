@@ -3,11 +3,10 @@
 import {
   createExperience,
   deleteExperience,
-  ExperienceQuery,
   getExperiences,
   updateExperience,
 } from '@/services/experiences'
-import { Experience } from '@/types/experience'
+import { Experience, ExperienceQuery } from '@/types/experience'
 import {
   keepPreviousData,
   useMutation,

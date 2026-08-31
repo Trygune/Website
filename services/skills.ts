@@ -1,4 +1,4 @@
-import { Skill } from '@/types/skill'
+import { Skill, SkillQuery } from '@/types/skill'
 import { api } from './api'
 import { buildQuery } from '@/lib/build-query'
 
@@ -10,13 +10,6 @@ type SkillsResponse = {
 type SkillResponse = {
   success: boolean
   data: Skill
-}
-
-export type SkillQuery = {
-  sort?: string
-  featured?: boolean
-  category?: string
-  level?: Skill['level']
 }
 
 export const getSkills = (query?: SkillQuery): Promise<SkillsResponse> => {

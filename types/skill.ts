@@ -9,3 +9,10 @@ export type Skill = {
   featured: boolean
   order: number
 }
+
+export type SkillQuery = {
+  sort?: string
+  featured?: boolean
+  category?: string
+  level?: Skill['level']
+}

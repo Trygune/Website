@@ -23,3 +23,14 @@ export type Project = {
   createdAt: string
   updatedAt: string
 }
+
+export type ProjectQuery = {
+  page?: number
+  limit?: number
+  sort?: string
+  featured?: boolean
+  status?: Project['status']
+  role?: string
+  year?: string
+  technologies?: string
+}

@@ -15,3 +15,12 @@ export type Post = {
   createdAt: string
   updatedAt: string
 }
+
+export type PostQuery = {
+  page?: number
+  limit?: number
+  sort?: string
+  status?: Post['status']
+  category?: string
+  tags?: string
+}
