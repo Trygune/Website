@@ -1,15 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import {
-  ChartBarStacked,
-  Code2,
-  Gem,
-  Pencil,
-  Plus,
-  Search,
-  Trash2,
-} from 'lucide-react'
+import { Code2, Gem, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
@@ -17,38 +9,39 @@ import EmptyState from '@/components/admin/shared/EmptyState'
 import { useDeleteSkill, useSkills } from '@/hooks/useSkills'
 import type { Skill } from '@/types/skill'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
+import { useDashboard } from '@/hooks/useDashboard'
 
 const SkillsAdminPage = () => {
   const { data, isPending, isError } = useSkills()
+  const {
+    data: statData,
+    isPending: statIsPending,
+    isError: statIsError,
+  } = useDashboard({ categories: 'skills' })
   const deleteMutation = useDeleteSkill()
 
   const skills = data?.data ?? []
   const hasSkills = skills.length > 0
+  const status = statData?.data.skills ?? {
+    total: 0,
+    featured: 0,
+  }
   const [deleteSkill, setDeleteSkill] = useState<Skill | null>(null)
-
-  const featuredCount = skills.filter((skill) => skill.featured).length
-
-  const categoriesCount = new Set(skills.map((skill) => skill.category)).size
 
   const stats = [
     {
       icon: Code2,
       title: 'Total skills',
-      length: skills.length,
+      length: status.total,
     },
     {
       icon: Gem,
       title: 'Featured',
-      length: featuredCount,
-    },
-    {
-      icon: ChartBarStacked,
-      title: 'Categories',
-      length: categoriesCount,
+      length: status.featured,
     },
   ]
 
-  if (isError) {
+  if (isError || statIsError) {
     return (
       <div className="rounded-xl border p-6">
         <h2 className="font-semibold">Failed to load skills</h2>
@@ -60,7 +53,7 @@ const SkillsAdminPage = () => {
     )
   }
 
-  if (isPending) {
+  if (isPending || statIsPending) {
     return (
       <div className="space-y-4">
         <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />

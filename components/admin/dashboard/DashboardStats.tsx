@@ -3,6 +3,7 @@
 import {
   ArrowUpRight,
   BriefcaseBusiness,
+  Code2,
   FileText,
   FolderKanban,
 } from 'lucide-react'
@@ -25,15 +26,20 @@ type DashboardStatsData = {
     total: number
     current: number
   }
+  skills: {
+    total: number
+    featured: number
+  }
 }
 
 const DashboardStats = ({
   projects,
   posts,
   experience,
+  skills,
 }: DashboardStatsData) => {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {/* Projects */}
       <Link
         href="/admin/projects"
@@ -105,6 +111,28 @@ const DashboardStats = ({
 
         <p className="mt-3 text-xs text-muted-foreground">
           {experience.current} current
+        </p>
+      </Link>
+
+      {/* Skills */}
+      <Link
+        href="/admin/skills"
+        className="group rounded-xl border bg-background p-5 transition-colors hover:bg-muted/30"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex size-10 items-center justify-center rounded-lg border">
+            <Code2 className="size-4 text-muted-foreground" />
+          </div>
+
+          <ArrowUpRight className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+        </div>
+
+        <p className="mt-5 text-sm text-muted-foreground">Skills</p>
+
+        <p className="mt-1 text-3xl font-bold tracking-tight">{skills.total}</p>
+
+        <p className="mt-3 text-xs text-muted-foreground">
+          {skills.featured} featured
         </p>
       </Link>
     </div>

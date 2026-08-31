@@ -22,6 +22,10 @@ export type DashboardResponse = {
       total: number
       current: number
     }
+    skills: {
+      total: number
+      featured: number
+    }
     recentProjects: Project[]
     recentPosts: Post[]
   }

@@ -24,6 +24,10 @@ const AdminDashboardPage = () => {
       total: 0,
       current: 0,
     },
+    skills: {
+      total: 0,
+      featured: 0,
+    },
     recentProjects: [],
     recentPosts: [],
   }
@@ -79,6 +83,7 @@ const AdminDashboardPage = () => {
         projects={stats.projects}
         posts={stats.posts}
         experience={stats.experience}
+        skills={stats.skills}
       />
 
       {/* Recent content */}
