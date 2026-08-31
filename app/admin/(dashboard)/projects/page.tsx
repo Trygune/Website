@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { FolderKanban, Plus, Search } from 'lucide-react'
+import { FolderKanban, Paperclip, Plus, Search, Upload } from 'lucide-react'
 import { useState } from 'react'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import EmptyState from '@/components/admin/shared/EmptyState'
@@ -8,17 +8,51 @@ import ProjectTable from '@/components/admin/projects/ProjectTable'
 import { useDeleteProject, useProjects } from '@/hooks/useProjects'
 import { Project } from '@/types/project'
 import Pagination from '@/components/shared/Pagination'
+import { useSearchParams } from 'next/navigation'
+import StatsGrid from '@/components/admin/dashboard/StatsGrid'
+import { useDashboard } from '@/hooks/useDashboard'
 
 const ProjectsAdminPage = () => {
-  const { data, isPending, isError } = useProjects()
+  const searchParams = useSearchParams()
+  const page = searchParams.get('page')
+  const currentPage = Number(page) || 1
+  const { data, isPending, isError } = useProjects({
+    page: currentPage,
+  })
+  const {
+    data: statData,
+    isPending: statIsPending,
+    isError: statIsError,
+  } = useDashboard()
   const deleteMutation = useDeleteProject()
   const projects = data?.data ?? []
+  const pagination = data?.pagination
   const hasProjects = projects.length > 0
+  const status = statData?.data.projects ?? {
+    total: 0,
+    published: 0,
+    drafts: 0,
+  }
+  const stats = [
+    {
+      icon: FolderKanban,
+      title: 'Total projects',
+      length: status.total,
+    },
+    {
+      icon: Upload,
+      title: 'Published',
+      length: status.published,
+    },
+    {
+      icon: Paperclip,
+      title: 'Drafts',
+      length: status.drafts,
+    },
+  ]
   const [deleteProject, setDeleteProject] = useState<Project | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const totalPages = 5
 
-  if (isError) {
+  if (isError || statIsError) {
     return (
       <div className="rounded-xl border p-6">
         <h2 className="font-semibold">Failed to load projects</h2>
@@ -30,7 +64,7 @@ const ProjectsAdminPage = () => {
     )
   }
 
-  if (isPending) {
+  if (isPending || statIsPending) {
     return (
       <div className="space-y-4">
         <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
@@ -66,43 +100,7 @@ const ProjectsAdminPage = () => {
       {hasProjects ? (
         <section className="space-y-5">
           {/* Stats */}
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border bg-background p-5">
-              <div className="flex size-10 items-center justify-center rounded-lg border">
-                <FolderKanban className="size-4 text-muted-foreground" />
-              </div>
-
-              <p className="mt-5 text-sm text-muted-foreground">
-                Total projects
-              </p>
-
-              <p className="mt-1 text-3xl font-bold tracking-tight">
-                {projects.length}
-              </p>
-            </div>
-
-            <div className="rounded-xl border bg-background p-5">
-              <p className="text-sm text-muted-foreground">Published</p>
-
-              <p className="mt-1 text-3xl font-bold tracking-tight">
-                {
-                  projects.filter((project) => project.status === 'published')
-                    .length
-                }
-              </p>
-            </div>
-
-            <div className="rounded-xl border bg-background p-5">
-              <p className="text-sm text-muted-foreground">Drafts</p>
-
-              <p className="mt-1 text-3xl font-bold tracking-tight">
-                {
-                  projects.filter((project) => project.status === 'draft')
-                    .length
-                }
-              </p>
-            </div>
-          </div>
+          <StatsGrid stats={stats} />
 
           {/* Search */}
           <div className="relative max-w-md">
@@ -117,11 +115,7 @@ const ProjectsAdminPage = () => {
 
           {/* Projects */}
           <ProjectTable projects={projects} onDelete={setDeleteProject} />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+          <Pagination pagination={pagination} baseUrl="/admin/projects" />
           <DeleteDialog
             open={Boolean(deleteProject)}
             title="Delete project"

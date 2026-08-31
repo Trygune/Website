@@ -28,8 +28,8 @@ export const navItems = [
     icon: FileText,
   },
   {
-    label: 'Experience',
-    href: '/admin/experience',
+    label: 'Experiences',
+    href: '/admin/experiences',
     icon: BriefcaseBusiness,
   },
 ]

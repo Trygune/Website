@@ -86,7 +86,7 @@ const DashboardStats = ({
 
       {/* Experience */}
       <Link
-        href="/admin/experience"
+        href="/admin/experiences"
         className="group rounded-xl border bg-background p-5 transition-colors hover:bg-muted/30"
       >
         <div className="flex items-start justify-between">

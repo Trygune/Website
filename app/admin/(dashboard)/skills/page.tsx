@@ -1,14 +1,22 @@
 'use client'
 
 import Link from 'next/link'
-import { Code2, Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import {
+  ChartBarStacked,
+  Code2,
+  Gem,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+} from 'lucide-react'
 import { useState } from 'react'
 
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import EmptyState from '@/components/admin/shared/EmptyState'
 import { useDeleteSkill, useSkills } from '@/hooks/useSkills'
 import type { Skill } from '@/types/skill'
-import Pagination from '@/components/shared/Pagination'
+import StatsGrid from '@/components/admin/dashboard/StatsGrid'
 
 const SkillsAdminPage = () => {
   const { data, isPending, isError } = useSkills()
@@ -16,15 +24,29 @@ const SkillsAdminPage = () => {
 
   const skills = data?.data ?? []
   const hasSkills = skills.length > 0
-
   const [deleteSkill, setDeleteSkill] = useState<Skill | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
-
-  const totalPages = 1
 
   const featuredCount = skills.filter((skill) => skill.featured).length
 
   const categoriesCount = new Set(skills.map((skill) => skill.category)).size
+
+  const stats = [
+    {
+      icon: Code2,
+      title: 'Total skills',
+      length: skills.length,
+    },
+    {
+      icon: Gem,
+      title: 'Featured',
+      length: featuredCount,
+    },
+    {
+      icon: ChartBarStacked,
+      title: 'Categories',
+      length: categoriesCount,
+    },
+  ]
 
   if (isError) {
     return (
@@ -74,35 +96,7 @@ const SkillsAdminPage = () => {
       {hasSkills ? (
         <section className="space-y-5">
           {/* Stats */}
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border bg-background p-5">
-              <div className="flex size-10 items-center justify-center rounded-lg border">
-                <Code2 className="size-4 text-muted-foreground" />
-              </div>
-
-              <p className="mt-5 text-sm text-muted-foreground">Total skills</p>
-
-              <p className="mt-1 text-3xl font-bold tracking-tight">
-                {skills.length}
-              </p>
-            </div>
-
-            <div className="rounded-xl border bg-background p-5">
-              <p className="text-sm text-muted-foreground">Featured</p>
-
-              <p className="mt-1 text-3xl font-bold tracking-tight">
-                {featuredCount}
-              </p>
-            </div>
-
-            <div className="rounded-xl border bg-background p-5">
-              <p className="text-sm text-muted-foreground">Categories</p>
-
-              <p className="mt-1 text-3xl font-bold tracking-tight">
-                {categoriesCount}
-              </p>
-            </div>
-          </div>
+          <StatsGrid stats={stats} />
 
           {/* Search */}
           <div className="relative max-w-md">
@@ -242,13 +236,6 @@ const SkillsAdminPage = () => {
               </table>
             </div>
           </div>
-
-          {/* Pagination */}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
 
           {/* Delete Dialog */}
           <DeleteDialog

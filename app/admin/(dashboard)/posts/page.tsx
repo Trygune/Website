@@ -1,21 +1,58 @@
 'use client'
 import Link from 'next/link'
-import { FileText, Plus, Search } from 'lucide-react'
+import { FileText, Paperclip, Plus, Search, Upload } from 'lucide-react'
 import EmptyState from '@/components/admin/shared/EmptyState'
 import { useState } from 'react'
 import PostTable from '@/components/admin/posts/PostTable'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import { useDeletePost, usePosts } from '@/hooks/usePosts'
 import { Post } from '@/types/post'
+import { useSearchParams } from 'next/navigation'
+import Pagination from '@/components/shared/Pagination'
+import { useDashboard } from '@/hooks/useDashboard'
+import StatsGrid from '@/components/admin/dashboard/StatsGrid'
 
 const PostsAdminPage = () => {
-  const { data, isPending, isError } = usePosts()
+  const searchParams = useSearchParams()
+  const page = searchParams.get('page')
+  const currentPage = Number(page) || 1
+  const { data, isPending, isError } = usePosts({
+    page: currentPage,
+  })
+  const {
+    data: statData,
+    isPending: statIsPending,
+    isError: statIsError,
+  } = useDashboard()
   const deleteMutation = useDeletePost()
   const posts = data?.data ?? []
+  const pagination = data?.pagination
   const hasPosts = posts.length > 0
+  const status = statData?.data.posts ?? {
+    total: 0,
+    published: 0,
+    drafts: 0,
+  }
+  const stats = [
+    {
+      icon: FileText,
+      title: 'Total posts',
+      length: status.total,
+    },
+    {
+      icon: Upload,
+      title: 'Published',
+      length: status.published,
+    },
+    {
+      icon: Paperclip,
+      title: 'Drafts',
+      length: status.drafts,
+    },
+  ]
   const [deletePost, setDeletePost] = useState<Post | null>(null)
 
-  if (isError) {
+  if (isError || statIsError) {
     return (
       <div className="rounded-xl border p-6">
         <h2 className="font-semibold">Failed to load projects</h2>
@@ -27,7 +64,7 @@ const PostsAdminPage = () => {
     )
   }
 
-  if (isPending) {
+  if (isPending || statIsPending) {
     return (
       <div className="space-y-4">
         <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
@@ -62,35 +99,7 @@ const PostsAdminPage = () => {
       {hasPosts ? (
         <>
           {/* Stats */}
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border bg-background p-5">
-              <div className="flex size-10 items-center justify-center rounded-lg border">
-                <FileText className="size-4 text-muted-foreground" />
-              </div>
-
-              <p className="mt-5 text-sm text-muted-foreground">Total posts</p>
-
-              <p className="mt-1 text-3xl font-bold tracking-tight">
-                {posts.length}
-              </p>
-            </div>
-
-            <div className="rounded-xl border bg-background p-5">
-              <p className="text-sm text-muted-foreground">Published</p>
-
-              <p className="mt-1 text-3xl font-bold tracking-tight">
-                {posts.filter((post) => post.publishedAt).length}
-              </p>
-            </div>
-
-            <div className="rounded-xl border bg-background p-5">
-              <p className="text-sm text-muted-foreground">Drafts</p>
-
-              <p className="mt-1 text-3xl font-bold tracking-tight">
-                {posts.filter((post) => !post.publishedAt).length}
-              </p>
-            </div>
-          </div>
+          <StatsGrid stats={stats} />
 
           {/* Search */}
           <div className="relative max-w-md">
@@ -105,6 +114,7 @@ const PostsAdminPage = () => {
 
           {/* Posts table */}
           <PostTable posts={posts} onDelete={setDeletePost} />
+          <Pagination pagination={pagination} baseUrl="/admin/posts" />
           <DeleteDialog
             open={Boolean(deletePost)}
             title="Delete post"

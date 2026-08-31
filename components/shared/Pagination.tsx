@@ -9,12 +9,12 @@ import {
 import Link from 'next/link'
 
 type PaginationProps = {
-  pagination: PaginationQueryProps
+  pagination?: PaginationQueryProps
   baseUrl?: string
 }
 
 const Pagination = ({ pagination, baseUrl }: PaginationProps) => {
-  if (pagination.totalPages <= 1) {
+  if (!pagination || pagination.totalPages <= 1) {
     return null
   }
 
