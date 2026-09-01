@@ -18,10 +18,27 @@ export type Experience = {
   updatedAt: string
 }
 
+export type ExperienceSortField =
+  | 'createdAt'
+  | 'updatedAt'
+  | 'type'
+  | 'role'
+  | 'company'
+  | 'startDate'
+  | 'endDate'
+  | 'period'
+  | 'current'
+  | 'location'
+
+type SortFieldWithDirection = ExperienceSortField | `-${ExperienceSortField}`
+
+export type ExperienceSort =
+  SortFieldWithDirection | `${SortFieldWithDirection},${SortFieldWithDirection}`
+
 export type ExperienceQuery = {
   page?: number
   limit?: number
-  sort?: string
+  sort?: ExperienceSort
   current?: boolean
   type?: Experience['type']
   location?: string

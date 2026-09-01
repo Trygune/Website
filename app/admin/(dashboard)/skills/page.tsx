@@ -1,18 +1,25 @@
 'use client'
 
 import Link from 'next/link'
-import { Code2, Gem, Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { Code2, Gem, Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import EmptyState from '@/components/admin/shared/EmptyState'
 import { useDeleteSkill, useSkills } from '@/hooks/useSkills'
-import type { Skill } from '@/types/skill'
+import type { Skill, SkillSort, SkillSortField } from '@/types/skill'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
 import { useDashboard } from '@/hooks/useDashboard'
+import SkillTable from '@/components/admin/skills/SkillTable'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { isSkillSort } from '@/components/admin/skills/SkillValidator'
 
 const SkillsAdminPage = () => {
-  const { data, isPending, isError } = useSkills()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const sortParam = searchParams.get('sort')
+  const sort: SkillSort = isSkillSort(sortParam) ? sortParam : 'order'
+  const { data, isPending, isError } = useSkills({ sort })
   const {
     data: statData,
     isPending: statIsPending,
@@ -40,6 +47,22 @@ const SkillsAdminPage = () => {
       length: status.featured,
     },
   ]
+
+  const handleSort = (field: SkillSortField) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    const currentSort = params.get('sort')
+
+    if (currentSort === field) {
+      params.set('sort', `-${field}`)
+    } else if (currentSort === `-${field}`) {
+      params.delete('sort')
+    } else {
+      params.set('sort', field)
+    }
+
+    router.push(`?${params.toString()}`)
+  }
 
   if (isError || statIsError) {
     return (
@@ -103,132 +126,12 @@ const SkillsAdminPage = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-hidden rounded-xl border bg-background">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="border-b bg-muted/30">
-                  <tr>
-                    <th className="px-5 py-4 text-left font-medium">Skill</th>
-
-                    <th className="px-5 py-4 text-left font-medium">
-                      Category
-                    </th>
-
-                    <th className="px-5 py-4 text-left font-medium">
-                      Proficiency
-                    </th>
-
-                    <th className="px-5 py-4 text-left font-medium">
-                      Featured
-                    </th>
-
-                    <th className="px-5 py-4 text-right font-medium">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y">
-                  {skills.map((skill) => (
-                    <tr
-                      key={skill.id}
-                      className="transition-colors hover:bg-muted/20"
-                    >
-                      {/* Skill */}
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-muted/20">
-                            {skill.icon ? (
-                              <span className="text-xs font-semibold uppercase">
-                                {skill.icon.slice(0, 2)}
-                              </span>
-                            ) : (
-                              <Code2 className="size-4 text-muted-foreground" />
-                            )}
-                          </div>
-
-                          <div className="min-w-0">
-                            <p className="font-medium">{skill.name}</p>
-
-                            <p className="mt-1 max-w-xs truncate text-xs text-muted-foreground">
-                              {skill.description}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Category */}
-                      <td className="px-5 py-4">
-                        <span className="inline-flex rounded-full border px-2.5 py-1 text-xs font-medium">
-                          {skill.category}
-                        </span>
-                      </td>
-
-                      {/* Proficiency */}
-                      <td className="px-5 py-4">
-                        <div className="min-w-48 space-y-2">
-                          <div className="flex items-center justify-between gap-4">
-                            <span className="text-xs font-medium">
-                              {skill.level}
-                            </span>
-
-                            <span className="text-xs text-muted-foreground">
-                              {skill.percent}%
-                            </span>
-                          </div>
-
-                          <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                            <div
-                              className="h-full rounded-full bg-foreground transition-all"
-                              style={{
-                                width: `${skill.percent}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Featured */}
-                      <td className="px-5 py-4">
-                        {skill.featured ? (
-                          <span className="inline-flex rounded-full border px-2.5 py-1 text-xs font-medium">
-                            Featured
-                          </span>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">
-                            —
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Actions */}
-                      <td className="px-5 py-4">
-                        <div className="flex justify-end gap-2">
-                          <Link
-                            href={`/admin/skills/${skill.id}`}
-                            className="inline-flex size-9 items-center justify-center rounded-lg border transition-colors hover:bg-muted"
-                            aria-label={`Edit ${skill.name}`}
-                          >
-                            <Pencil className="size-4" />
-                          </Link>
-
-                          <button
-                            type="button"
-                            onClick={() => setDeleteSkill(skill)}
-                            disabled={deleteMutation.isPending}
-                            className="inline-flex size-9 items-center justify-center rounded-lg border text-destructive transition-colors hover:bg-destructive/10 disabled:pointer-events-none disabled:opacity-50"
-                            aria-label={`Delete ${skill.name}`}
-                          >
-                            <Trash2 className="size-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <SkillTable
+            skills={skills}
+            onDelete={setDeleteSkill}
+            sort={sort}
+            onSort={handleSort}
+          />
 
           {/* Delete Dialog */}
           <DeleteDialog

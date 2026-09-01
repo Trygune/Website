@@ -16,10 +16,18 @@ export type Post = {
   updatedAt: string
 }
 
+export type PostSortField =
+  'createdAt' | 'updatedAt' | 'title' | 'category' | 'status' | 'publishedAt'
+
+type SortFieldWithDirection = PostSortField | `-${PostSortField}`
+
+export type PostSort =
+  SortFieldWithDirection | `${SortFieldWithDirection},${SortFieldWithDirection}`
+
 export type PostQuery = {
   page?: number
   limit?: number
-  sort?: string
+  sort?: PostSort
   status?: Post['status']
   category?: string
   tags?: string

@@ -24,10 +24,18 @@ export type Project = {
   updatedAt: string
 }
 
+export type ProjectSortField =
+  'title' | 'year' | 'createdAt' | 'updatedAt' | 'status'
+
+type SortFieldWithDirection = ProjectSortField | `-${ProjectSortField}`
+
+export type ProjectSort =
+  SortFieldWithDirection | `${SortFieldWithDirection},${SortFieldWithDirection}`
+
 export type ProjectQuery = {
   page?: number
   limit?: number
-  sort?: string
+  sort?: ProjectSort
   featured?: boolean
   status?: Project['status']
   role?: string

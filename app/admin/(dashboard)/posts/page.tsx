@@ -6,18 +6,23 @@ import { useState } from 'react'
 import PostTable from '@/components/admin/posts/PostTable'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import { useDeletePost, usePosts } from '@/hooks/usePosts'
-import { Post } from '@/types/post'
-import { useSearchParams } from 'next/navigation'
+import { Post, PostSort, PostSortField } from '@/types/post'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Pagination from '@/components/shared/Pagination'
 import { useDashboard } from '@/hooks/useDashboard'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
+import { isPostSort } from '@/components/admin/posts/PostValidator'
 
 const PostsAdminPage = () => {
+  const router = useRouter()
   const searchParams = useSearchParams()
-  const page = searchParams.get('page')
-  const currentPage = Number(page) || 1
+  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
+  const sortParam = searchParams.get('sort')
+  const sort: PostSort = isPostSort(sortParam) ? sortParam : '-publishedAt'
+
   const { data, isPending, isError } = usePosts({
-    page: currentPage,
+    page,
+    sort,
   })
   const {
     data: statData,
@@ -51,6 +56,24 @@ const PostsAdminPage = () => {
     },
   ]
   const [deletePost, setDeletePost] = useState<Post | null>(null)
+
+  const handleSort = (field: PostSortField) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    const currentSort = params.get('sort')
+
+    if (currentSort === field) {
+      params.set('sort', `-${field}`)
+    } else if (currentSort === `-${field}`) {
+      params.delete('sort')
+    } else {
+      params.set('sort', field)
+    }
+
+    params.set('page', '1')
+
+    router.push(`?${params.toString()}`)
+  }
 
   if (isError || statIsError) {
     return (
@@ -113,7 +136,12 @@ const PostsAdminPage = () => {
           </div>
 
           {/* Posts table */}
-          <PostTable posts={posts} onDelete={setDeletePost} />
+          <PostTable
+            posts={posts}
+            onDelete={setDeletePost}
+            sort={sort}
+            onSort={handleSort}
+          />
           <Pagination pagination={pagination} baseUrl="/admin/posts" />
           <DeleteDialog
             open={Boolean(deletePost)}

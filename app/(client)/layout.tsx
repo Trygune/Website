@@ -1,5 +1,6 @@
 import Footer from '@/components/layout/Footer'
 import Navbar from '@/components/layout/Navbar'
+import ScrollToTop from '@/components/layout/ScrollToTop'
 import SectionNavigation from '@/components/layout/SectionNavigation'
 
 type AppLayoutProps = {
@@ -9,6 +10,7 @@ type AppLayoutProps = {
 const AppLayout = ({ children }: AppLayoutProps) => {
   return (
     <div className="min-h-screen bg-muted/30">
+      <ScrollToTop />
       <SectionNavigation />
       <Navbar />
       <main className="w-full max-w-7xl mx-auto px-4">{children}</main>

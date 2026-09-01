@@ -6,18 +6,24 @@ import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import EmptyState from '@/components/admin/shared/EmptyState'
 import ProjectTable from '@/components/admin/projects/ProjectTable'
 import { useDeleteProject, useProjects } from '@/hooks/useProjects'
-import { Project } from '@/types/project'
+import { Project, ProjectSort, ProjectSortField } from '@/types/project'
 import Pagination from '@/components/shared/Pagination'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
 import { useDashboard } from '@/hooks/useDashboard'
+import { isProjectSort } from '@/components/admin/projects/ProjectValidator'
 
 const ProjectsAdminPage = () => {
+  const router = useRouter()
   const searchParams = useSearchParams()
-  const page = searchParams.get('page')
-  const currentPage = Number(page) || 1
+  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
+  const sortParam = searchParams.get('sort')
+  const sort: ProjectSort = isProjectSort(sortParam)
+    ? sortParam
+    : '-year,-createdAt'
   const { data, isPending, isError } = useProjects({
-    page: currentPage,
+    page,
+    sort,
   })
   const {
     data: statData,
@@ -51,6 +57,24 @@ const ProjectsAdminPage = () => {
     },
   ]
   const [deleteProject, setDeleteProject] = useState<Project | null>(null)
+
+  const handleSort = (field: ProjectSortField) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    const currentSort = params.get('sort')
+
+    if (currentSort === field) {
+      params.set('sort', `-${field}`)
+    } else if (currentSort === `-${field}`) {
+      params.delete('sort')
+    } else {
+      params.set('sort', field)
+    }
+
+    params.set('page', '1')
+
+    router.push(`?${params.toString()}`)
+  }
 
   if (isError || statIsError) {
     return (
@@ -114,7 +138,12 @@ const ProjectsAdminPage = () => {
           </div>
 
           {/* Projects */}
-          <ProjectTable projects={projects} onDelete={setDeleteProject} />
+          <ProjectTable
+            projects={projects}
+            onDelete={setDeleteProject}
+            sort={sort}
+            onSort={handleSort}
+          />
           <Pagination pagination={pagination} baseUrl="/admin/projects" />
           <DeleteDialog
             open={Boolean(deleteProject)}

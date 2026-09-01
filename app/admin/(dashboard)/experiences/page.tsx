@@ -6,18 +6,28 @@ import { useState } from 'react'
 import ExperienceTable from '@/components/admin/experiences/ExperienceTable'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import { useDeleteExperience, useExperiences } from '@/hooks/useExperiences'
-import { Experience } from '@/types/experience'
+import {
+  Experience,
+  ExperienceSort,
+  ExperienceSortField,
+} from '@/types/experience'
 import Pagination from '@/components/shared/Pagination'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useDashboard } from '@/hooks/useDashboard'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
+import { isExperienceSort } from '@/components/admin/experiences/ExperienceValidator'
 
 const ExperienceAdminPage = () => {
+  const router = useRouter()
   const searchParams = useSearchParams()
-  const page = searchParams.get('page')
-  const currentPage = Number(page) || 1
+  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
+  const sortParam = searchParams.get('sort')
+  const sort: ExperienceSort = isExperienceSort(sortParam)
+    ? sortParam
+    : '-current,-startDate'
   const { data, isPending, isError } = useExperiences({
-    page: currentPage,
+    page,
+    sort,
   })
   const {
     data: statData,
@@ -37,6 +47,7 @@ const ExperienceAdminPage = () => {
       icon: NotebookPen,
       title: 'Total entries',
       length: status.total,
+      subtitle: 'All experiences or educations',
     },
     {
       icon: BriefcaseBusiness,
@@ -48,6 +59,24 @@ const ExperienceAdminPage = () => {
   const [deleteExperience, setDeleteExperience] = useState<Experience | null>(
     null
   )
+
+  const handleSort = (field: ExperienceSortField) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    const currentSort = params.get('sort')
+
+    if (currentSort === field) {
+      params.set('sort', `-${field}`)
+    } else if (currentSort === `-${field}`) {
+      params.delete('sort')
+    } else {
+      params.set('sort', field)
+    }
+
+    params.set('page', '1')
+
+    router.push(`?${params.toString()}`)
+  }
 
   if (isError || statIsError) {
     return (
@@ -101,6 +130,8 @@ const ExperienceAdminPage = () => {
           <ExperienceTable
             experiences={experiences}
             onDelete={setDeleteExperience}
+            sort={sort}
+            onSort={handleSort}
           />
           <Pagination pagination={pagination} baseUrl="/admin/experiences" />
           <DeleteDialog

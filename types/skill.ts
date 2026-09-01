@@ -10,8 +10,23 @@ export type Skill = {
   order: number
 }
 
+export type SkillSortField =
+  | 'createdAt'
+  | 'updatedAt'
+  | 'name'
+  | 'category'
+  | 'level'
+  | 'percent'
+  | 'featured'
+  | 'order'
+
+type SortFieldWithDirection = SkillSortField | `-${SkillSortField}`
+
+export type SkillSort =
+  SortFieldWithDirection | `${SortFieldWithDirection},${SortFieldWithDirection}`
+
 export type SkillQuery = {
-  sort?: string
+  sort?: SkillSort
   featured?: boolean
   category?: string
   level?: Skill['level']
