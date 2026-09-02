@@ -2,58 +2,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 import ProjectForm from '@/components/admin/projects/ProjectForm'
-
-const projects = [
-  {
-    id: '1',
-    title: 'Habit Tracker',
-    slug: 'habit-tracker',
-    description:
-      'A modern habit tracking PWA for creating and maintaining daily habits.',
-    fullDescription:
-      'A modern Progressive Web App designed to help users create, track, and maintain daily habits with a simple and focused interface.',
-    technologies: ['Next.js', 'TypeScript', 'Tailwind CSS', 'TanStack Query'],
-    coverImage: '',
-    githubUrl: 'https://github.com/Trygune/habit-tracker',
-    liveUrl: '',
-    featured: true,
-    status: 'published' as const,
-  },
-  {
-    id: '2',
-    title: 'Eslimi Shop',
-    slug: 'eslimi-shop',
-    description: 'An e-commerce application for wood and metal products.',
-    fullDescription:
-      'An e-commerce platform focused on selling wood and metal products with a modern shopping experience.',
-    technologies: [
-      'Next.js',
-      'TypeScript',
-      'Drizzle ORM',
-      'PostgreSQL',
-      'Zustand',
-    ],
-    coverImage: '',
-    githubUrl: 'https://github.com/Trygune/eslimi-shop',
-    liveUrl: '',
-    featured: true,
-    status: 'published' as const,
-  },
-  {
-    id: '3',
-    title: 'Tax Calculator',
-    slug: 'tax-calculator',
-    description: 'A tax calculation application built with React.',
-    fullDescription:
-      'A frontend application for calculating taxes through an easy-to-use interface.',
-    technologies: ['React', 'Vite', 'Redux Toolkit'],
-    coverImage: '',
-    githubUrl: '',
-    liveUrl: '',
-    featured: false,
-    status: 'draft' as const,
-  },
-]
+import { getProjectById } from '@/services/projects'
 
 type ProjectEditPageProps = {
   params: Promise<{
@@ -64,7 +13,7 @@ type ProjectEditPageProps = {
 const ProjectEditPage = async ({ params }: ProjectEditPageProps) => {
   const { id } = await params
 
-  const project = projects.find((project) => project.id === id)
+  const project = await getProjectById(String(id))
 
   if (!project) {
     return (
@@ -114,7 +63,7 @@ const ProjectEditPage = async ({ params }: ProjectEditPageProps) => {
       </div>
 
       {/* Form */}
-      <ProjectForm isEditing initialData={project} />
+      <ProjectForm isEditing initialData={project.data} />
     </div>
   )
 }

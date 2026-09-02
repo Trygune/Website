@@ -213,7 +213,7 @@ const PostTable = ({ posts, onDelete, sort, onSort }: PostTableProps) => {
                     {/* View */}
                     {post.status === 'published' && (
                       <Link
-                        href={`/posts/${post.slug}`}
+                        href={`/blog/${post.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`View ${post.title}`}

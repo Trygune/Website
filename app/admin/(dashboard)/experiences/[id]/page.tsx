@@ -2,47 +2,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 import ExperienceForm from '@/components/admin/experiences/ExperienceForm'
-
-const experiences = [
-  {
-    id: '1',
-    role: 'Front-End Developer Intern',
-    company: 'Cultural Heritage Organization',
-    type: 'internship',
-    location: 'Iran',
-    startDate: '2026-05-01',
-    endDate: '2026-07-31',
-    current: false,
-    description:
-      'Worked on front-end development and UI implementation for web-based projects.',
-    responsibilities: [
-      'Implemented responsive user interfaces.',
-      'Worked with modern CSS and utility-first styling.',
-      'Built interactive web interfaces using JavaScript.',
-      'Applied UI/UX principles to improve usability.',
-    ],
-    technologies: ['HTML', 'CSS', 'JavaScript', 'Tailwind CSS', 'TypeScript'],
-  },
-  {
-    id: '2',
-    role: 'Computer Science Student',
-    company: 'Computer Science',
-    type: 'education',
-    location: 'Iran',
-    startDate: '2025-09-01',
-    endDate: '',
-    current: true,
-    description:
-      'Developing a strong foundation in software engineering while focusing on modern web development.',
-    responsibilities: [
-      'Studying software engineering fundamentals.',
-      'Building projects with modern web technologies.',
-      'Exploring frontend architecture and best practices.',
-      'Learning backend development and databases.',
-    ],
-    technologies: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js'],
-  },
-]
+import { getExperienceById } from '@/services/experiences'
 
 type ExperienceEditPageProps = {
   params: Promise<{
@@ -53,7 +13,7 @@ type ExperienceEditPageProps = {
 const ExperienceEditPage = async ({ params }: ExperienceEditPageProps) => {
   const { id } = await params
 
-  const experience = experiences.find((experience) => experience.id === id)
+  const experience = await getExperienceById(String(id))
 
   if (!experience) {
     return (
@@ -105,7 +65,7 @@ const ExperienceEditPage = async ({ params }: ExperienceEditPageProps) => {
       </div>
 
       {/* Form */}
-      <ExperienceForm isEditing initialData={experience} />
+      <ExperienceForm isEditing initialData={experience.data} />
     </div>
   )
 }

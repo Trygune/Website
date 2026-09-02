@@ -21,29 +21,24 @@ export const getPosts = (query?: PostQuery): Promise<PostsResponse> => {
 export const getPostBySlug = (slug: string): Promise<PostResponse> => {
   return api<PostResponse>(`/posts/${slug}`)
 }
+export const getPostById = (id: string): Promise<PostResponse> => {
+  return api<PostResponse>(`/posts/id/${id}`)
+}
 
-export const createPost = (
-  data: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>
-): Promise<PostResponse> => {
+export const createPost = (data: FormData): Promise<PostResponse> => {
   return api<PostResponse>('/posts', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: data,
   })
 }
 
 export const updatePost = (
   id: string,
-  data: Partial<Omit<Post, 'id' | 'createdAt' | 'updatedAt'>>
+  data: FormData
 ): Promise<PostResponse> => {
-  return api<PostResponse>(`/posts/${id}`, {
+  return api<PostResponse>(`/posts/id/${id}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: data,
   })
 }
 
@@ -54,7 +49,7 @@ export const deletePost = (
 }> => {
   return api<{
     success: boolean
-  }>(`/posts/${id}`, {
+  }>(`/posts/id/${id}`, {
     method: 'DELETE',
   })
 }

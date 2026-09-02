@@ -17,6 +17,7 @@ export const api = async <T>(
   const data = await response.json()
 
   if (!response.ok) {
+    console.error('API Error:', data.errors)
     throw new Error(data.message ?? 'Something went wrong')
   }
 

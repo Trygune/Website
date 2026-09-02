@@ -16,6 +16,10 @@ export const getSkills = (query?: SkillQuery): Promise<SkillsResponse> => {
   return api<SkillsResponse>(`/skills${buildQuery(query)}`)
 }
 
+export const getSkillById = (id: string): Promise<SkillResponse> => {
+  return api<SkillResponse>(`/skills/id/${id}`)
+}
+
 export const createSkill = (
   data: Omit<Skill, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<SkillResponse> => {
@@ -32,7 +36,7 @@ export const updateSkill = (
   id: string,
   data: Partial<Omit<Skill, 'id' | 'createdAt' | 'updatedAt'>>
 ): Promise<SkillResponse> => {
-  return api<SkillResponse>(`/skills/${id}`, {
+  return api<SkillResponse>(`/skills/id/${id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -48,7 +52,7 @@ export const deleteSkill = (
 }> => {
   return api<{
     success: boolean
-  }>(`/skills/${id}`, {
+  }>(`/skills/id/${id}`, {
     method: 'DELETE',
   })
 }

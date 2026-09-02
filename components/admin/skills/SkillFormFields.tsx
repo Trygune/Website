@@ -1,180 +1,311 @@
 'use client'
 
+import { useState } from 'react'
 import { Skill } from '@/types/skill'
 
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Slider } from '@/components/ui/slider'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+
 type SkillFormFieldsProps = {
-  initialData?: Omit<Skill, 'id'>
+  initialData?: Skill
+  featured: boolean
+  onFeaturedChange: (featured: boolean) => void
 }
 
-const SkillFormFields = ({ initialData }: SkillFormFieldsProps) => {
+const skillLevels = [
+  {
+    label: 'Beginner',
+    value: 'Beginner',
+    min: 0,
+    max: 39,
+  },
+  {
+    label: 'Intermediate',
+    value: 'Intermediate',
+    min: 40,
+    max: 69,
+  },
+  {
+    label: 'Advanced',
+    value: 'Advanced',
+    min: 70,
+    max: 100,
+  },
+]
+
+const getLevelFromPercent = (value: number[]) => {
+  if (value < [40]) return 'Beginner'
+  if (value < [70]) return 'Intermediate'
+
+  return 'Advanced'
+}
+
+const getDefaultPercent = (level?: Skill['level']) => {
+  switch (level) {
+    case 'Beginner':
+      return 25
+    case 'Intermediate':
+      return 50
+    case 'Advanced':
+      return 75
+    default:
+      return 0
+  }
+}
+
+const SkillFormFields = ({
+  initialData,
+  featured,
+  onFeaturedChange,
+}: SkillFormFieldsProps) => {
+  const [percent, setPercent] = useState<number[]>(
+    initialData?.percent !== undefined
+      ? [initialData.percent]
+      : [getDefaultPercent(initialData?.level)]
+  )
+
+  const [level, setLevel] = useState<Skill['level']>(
+    initialData?.level ?? 'Beginner'
+  )
+
   return (
     <div className="space-y-8">
       {/* Basic information */}
-      <section className="space-y-5">
-        <div>
-          <h2 className="text-lg font-semibold">Basic information</h2>
+      <section className="rounded-xl border bg-background">
+        <div className="border-b px-5 py-4">
+          <h2 className="font-semibold">Basic information</h2>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Define the skill and how it should appear on your portfolio.
+            Define the skill and its category.
           </p>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          {/* Name */}
-          <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium">
-              Name
-            </label>
+        <FieldGroup className="p-5">
+          <div className="grid gap-6 sm:grid-cols-2">
+            {/* Name */}
+            <Field>
+              <FieldLabel htmlFor="name">Name</FieldLabel>
 
-            <input
-              id="name"
-              name="name"
-              type="text"
-              defaultValue={initialData?.name}
-              placeholder="React"
-              required
-              className="h-11 w-full rounded-lg border bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
-            />
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                defaultValue={initialData?.name}
+                placeholder="React"
+                required
+              />
+
+              <FieldDescription>
+                The name of the technology or skill.
+              </FieldDescription>
+            </Field>
+
+            {/* Category */}
+            <Field>
+              <FieldLabel htmlFor="category">Category</FieldLabel>
+
+              <Input
+                id="category"
+                name="category"
+                type="text"
+                defaultValue={initialData?.category}
+                placeholder="Frontend"
+                required
+              />
+
+              <FieldDescription>
+                For example: Frontend, Backend, Database, or Tools.
+              </FieldDescription>
+            </Field>
           </div>
 
-          {/* Category */}
-          <div className="space-y-2">
-            <label htmlFor="category" className="text-sm font-medium">
-              Category
-            </label>
+          {/* Description */}
+          <Field>
+            <FieldLabel htmlFor="description">Description</FieldLabel>
 
-            <input
-              id="category"
-              name="category"
-              type="text"
-              defaultValue={initialData?.category}
-              placeholder="Frontend"
-              required
-              className="h-11 w-full rounded-lg border bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+            <Textarea
+              id="description"
+              name="description"
+              rows={5}
+              defaultValue={initialData?.description}
+              placeholder="Building modern user interfaces with React."
             />
-          </div>
-        </div>
 
-        {/* Description */}
-        <div className="space-y-2">
-          <label htmlFor="description" className="text-sm font-medium">
-            Description
-          </label>
-
-          <textarea
-            id="description"
-            name="description"
-            rows={4}
-            defaultValue={initialData?.description}
-            placeholder="A short description of your experience with this technology..."
-            className="w-full resize-y rounded-lg border bg-background px-3 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
-          />
-        </div>
+            <FieldDescription>
+              Add a short description explaining how you use this skill.
+            </FieldDescription>
+          </Field>
+        </FieldGroup>
       </section>
 
-      {/* Skill level */}
-      <section className="space-y-5">
-        <div>
-          <h2 className="text-lg font-semibold">Skill level</h2>
+      {/* Proficiency */}
+      <section className="rounded-xl border bg-background">
+        <div className="border-b px-5 py-4">
+          <h2 className="font-semibold">Proficiency</h2>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Set your proficiency level from 0 to 100.
+            Define your proficiency level and confidence percentage.
           </p>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label htmlFor="level" className="text-sm font-medium">
-              Level
-            </label>
+        <FieldGroup className="p-5">
+          {/* Level */}
+          <Field>
+            <FieldLabel htmlFor="level">Skill level</FieldLabel>
 
-            <span className="text-sm text-muted-foreground">
-              {initialData?.level ?? 0}%
-            </span>
-          </div>
+            <Select
+              name="level"
+              value={level}
+              onValueChange={(value) => {
+                const selectedLevel = value as Skill['level']
+                setLevel(selectedLevel)
+                setPercent([getDefaultPercent(selectedLevel)])
+              }}
+              required
+            >
+              <SelectTrigger id="level" className="w-full">
+                <SelectValue placeholder="Select skill level" />
+              </SelectTrigger>
 
-          <input
-            id="level"
-            name="level"
-            type="range"
-            min="0"
-            max="100"
-            defaultValue={initialData?.level ?? 0}
-            className="w-full accent-foreground"
-          />
+              <SelectContent>
+                {skillLevels.map((level) => (
+                  <SelectItem key={level.value} value={level.value}>
+                    {level.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
 
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Beginner</span>
-            <span>Intermediate</span>
-            <span>Advanced</span>
-          </div>
-        </div>
+          {/* Percent */}
+          <Field>
+            <div className="flex items-center justify-between gap-4">
+              <FieldLabel htmlFor="percent">Proficiency</FieldLabel>
+
+              <span className="min-w-12 text-right text-sm font-medium tabular-nums">
+                {percent}%
+              </span>
+            </div>
+
+            <input type="hidden" name="level" value={level} />
+
+            <input type="hidden" name="percent" value={String(percent)} />
+
+            <Slider
+              id="percent"
+              min={0}
+              max={100}
+              step={1}
+              value={percent}
+              onValueChange={(value) => {
+                setPercent(value as number[])
+                setLevel(getLevelFromPercent(value as number[]))
+              }}
+              className="mt-3"
+            />
+
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>0%</span>
+              <span>50%</span>
+              <span>100%</span>
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Beginner</span>
+              <span>Intermediate</span>
+              <span>Advanced</span>
+            </div>
+
+            <FieldDescription>
+              {percent}% proficiency · {level}
+            </FieldDescription>
+          </Field>
+        </FieldGroup>
       </section>
 
       {/* Display settings */}
-      <section className="space-y-5">
-        <div>
-          <h2 className="text-lg font-semibold">Display settings</h2>
+      <section className="rounded-xl border bg-background">
+        <div className="border-b px-5 py-4">
+          <h2 className="font-semibold">Display settings</h2>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Control how this skill is displayed on your portfolio.
+            Control how this skill appears throughout your portfolio.
           </p>
         </div>
 
-        {/* Icon */}
-        <div className="space-y-2">
-          <label htmlFor="icon" className="text-sm font-medium">
-            Icon
+        <FieldGroup className="p-5">
+          {/* Icon */}
+          <Field>
+            <FieldLabel htmlFor="icon">Icon</FieldLabel>
+
+            <Input
+              id="icon"
+              name="icon"
+              type="text"
+              defaultValue={initialData?.icon}
+              placeholder="react"
+            />
+
+            <FieldDescription>
+              Use the icon identifier that your frontend uses to resolve the
+              corresponding icon.
+            </FieldDescription>
+          </Field>
+
+          {/* Order */}
+          <Field>
+            <FieldLabel htmlFor="order">Display order</FieldLabel>
+
+            <Input
+              id="order"
+              name="order"
+              type="number"
+              min="0"
+              defaultValue={initialData?.order ?? 0}
+              placeholder="0"
+            />
+
+            <FieldDescription>
+              Lower numbers are displayed first.
+            </FieldDescription>
+          </Field>
+
+          {/* Featured */}
+          <label
+            htmlFor="featured"
+            className="flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors hover:bg-muted/50"
+          >
+            <input
+              id="featured"
+              name="featured"
+              type="checkbox"
+              checked={featured}
+              onChange={(event) => onFeaturedChange(event.target.checked)}
+              className="mt-0.5 size-4 accent-foreground"
+            />
+
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Featured skill</p>
+
+              <p className="text-sm leading-5 text-muted-foreground">
+                Highlight this skill in featured sections of your portfolio.
+              </p>
+            </div>
           </label>
-
-          <input
-            id="icon"
-            name="icon"
-            type="text"
-            defaultValue={initialData?.icon}
-            placeholder="react"
-            className="h-11 w-full rounded-lg border bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
-          />
-
-          <p className="text-xs text-muted-foreground">
-            Use an icon identifier that your frontend can resolve.
-          </p>
-        </div>
-
-        {/* Order */}
-        <div className="space-y-2">
-          <label htmlFor="order" className="text-sm font-medium">
-            Display order
-          </label>
-
-          <input
-            id="order"
-            name="order"
-            type="number"
-            min="0"
-            defaultValue={initialData?.order ?? 0}
-            className="h-11 w-full rounded-lg border bg-background px-3 text-sm outline-none transition-colors focus:border-foreground"
-          />
-        </div>
-
-        {/* Featured */}
-        <label className="flex cursor-pointer items-start gap-3 rounded-lg border p-4">
-          <input
-            id="featured"
-            name="featured"
-            type="checkbox"
-            defaultChecked={initialData?.featured ?? false}
-            className="mt-0.5 size-4 accent-foreground"
-          />
-
-          <span>
-            <span className="block text-sm font-medium">Featured skill</span>
-
-            <span className="mt-1 block text-xs text-muted-foreground">
-              Show this skill in featured skill sections on the portfolio.
-            </span>
-          </span>
-        </label>
+        </FieldGroup>
       </section>
     </div>
   )

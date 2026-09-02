@@ -2,19 +2,34 @@
 
 import ImageUpload from '../shared/ImageUpload'
 
-type PostFormData = {
-  title?: string
-  slug?: string
-  excerpt?: string
-  content?: string
-  category?: string
-  tags?: string[]
-  coverImage?: string
-  published?: boolean
-}
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from '@/components/ui/field'
+
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Post } from '@/types/post'
+import { useState } from 'react'
+import TagInput from '../shared/TagInput'
 
 type PostFormFieldsProps = {
-  initialData?: PostFormData
+  initialData?: Post
+  status: Post['status']
+  onStatusChange: (status: Post['status']) => void
 }
 
 const categories = [
@@ -28,7 +43,25 @@ const categories = [
   'Other',
 ]
 
-const PostFormFields = ({ initialData }: PostFormFieldsProps) => {
+const statuses = [
+  {
+    value: 'draft',
+    label: 'Draft',
+    description: 'Keep this post hidden from the public.',
+  },
+  {
+    value: 'published',
+    label: 'Published',
+    description: 'Make this post visible on your public blog.',
+  },
+]
+
+const PostFormFields = ({
+  status: stat,
+  onStatusChange,
+  initialData,
+}: PostFormFieldsProps) => {
+  const [tags, setTags] = useState<string[]>(initialData?.tags ?? [])
   return (
     <div className="space-y-8">
       {/* Basic Information */}
@@ -36,70 +69,67 @@ const PostFormFields = ({ initialData }: PostFormFieldsProps) => {
         <div className="border-b px-5 py-4">
           <h2 className="font-semibold">Basic information</h2>
 
-          <p className="mt-1 text-xs text-muted-foreground">
-            The basic information about your blog post.
+          <p className="mt-1 text-sm text-muted-foreground">
+            Add the main information visitors will see about this post.
           </p>
         </div>
 
-        <div className="grid gap-6 p-5">
-          {/* Title */}
-          <div className="space-y-2">
-            <label htmlFor="title" className="text-sm font-medium">
-              Title
-            </label>
+        <div className="p-5">
+          <FieldGroup>
+            {/* Title */}
+            <Field>
+              <FieldLabel htmlFor="title">Title</FieldLabel>
 
-            <input
-              id="title"
-              name="title"
-              type="text"
-              defaultValue={initialData?.title}
-              placeholder="Building a modern portfolio with Next.js"
-              required
-              className="h-11 w-full rounded-lg border bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus:border-foreground"
-            />
-          </div>
+              <Input
+                id="title"
+                name="title"
+                type="text"
+                defaultValue={initialData?.title}
+                placeholder="Building Modern React Applications"
+                required
+              />
 
-          {/* Slug */}
-          <div className="space-y-2">
-            <label htmlFor="slug" className="text-sm font-medium">
-              Slug
-            </label>
+              <FieldDescription>
+                Use a clear and descriptive title for your post.
+              </FieldDescription>
+            </Field>
 
-            <input
-              id="slug"
-              name="slug"
-              type="text"
-              defaultValue={initialData?.slug}
-              placeholder="building-modern-portfolio-nextjs"
-              required
-              className="h-11 w-full rounded-lg border bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus:border-foreground"
-            />
+            {/* Slug */}
+            <Field>
+              <FieldLabel htmlFor="slug">Slug</FieldLabel>
 
-            <p className="text-xs text-muted-foreground">
-              Used in the URL of the post.
-            </p>
-          </div>
+              <Input
+                id="slug"
+                name="slug"
+                type="text"
+                defaultValue={initialData?.slug}
+                placeholder="building-modern-react-applications"
+                required
+              />
 
-          {/* Excerpt */}
-          <div className="space-y-2">
-            <label htmlFor="excerpt" className="text-sm font-medium">
-              Excerpt
-            </label>
+              <FieldDescription>
+                This will be used as the URL of your post.
+              </FieldDescription>
+            </Field>
 
-            <textarea
-              id="excerpt"
-              name="excerpt"
-              rows={3}
-              defaultValue={initialData?.excerpt}
-              placeholder="A short description of the post..."
-              required
-              className="w-full resize-y rounded-lg border bg-transparent px-3 py-3 text-sm leading-6 outline-none placeholder:text-muted-foreground focus:border-foreground"
-            />
+            {/* Excerpt */}
+            <Field>
+              <FieldLabel htmlFor="excerpt">Excerpt</FieldLabel>
 
-            <p className="text-xs text-muted-foreground">
-              A short summary shown in post cards and search results.
-            </p>
-          </div>
+              <Textarea
+                id="excerpt"
+                name="excerpt"
+                defaultValue={initialData?.excerpt}
+                placeholder="A practical look at building scalable and maintainable React applications..."
+                rows={4}
+                required
+              />
+
+              <FieldDescription>
+                A short summary displayed on post cards and search results.
+              </FieldDescription>
+            </Field>
+          </FieldGroup>
         </div>
       </section>
 
@@ -108,31 +138,29 @@ const PostFormFields = ({ initialData }: PostFormFieldsProps) => {
         <div className="border-b px-5 py-4">
           <h2 className="font-semibold">Content</h2>
 
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             Write the main content of your blog post.
           </p>
         </div>
 
         <div className="p-5">
-          <div className="space-y-2">
-            <label htmlFor="content" className="text-sm font-medium">
-              Content
-            </label>
+          <Field>
+            <FieldLabel htmlFor="content">Content</FieldLabel>
 
-            <textarea
+            <Textarea
               id="content"
               name="content"
-              rows={20}
               defaultValue={initialData?.content}
               placeholder="Write your post content here..."
+              rows={20}
               required
-              className="w-full resize-y rounded-lg border bg-transparent px-4 py-3 text-sm leading-7 outline-none placeholder:text-muted-foreground focus:border-foreground"
+              className="min-h-[400px] resize-y leading-7"
             />
 
-            <p className="text-xs text-muted-foreground">
+            <FieldDescription>
               Markdown or rich-text support can be added later.
-            </p>
-          </div>
+            </FieldDescription>
+          </Field>
         </div>
       </section>
 
@@ -141,56 +169,74 @@ const PostFormFields = ({ initialData }: PostFormFieldsProps) => {
         <div className="border-b px-5 py-4">
           <h2 className="font-semibold">Organization</h2>
 
-          <p className="mt-1 text-xs text-muted-foreground">
-            Categorize and organize your post.
+          <p className="mt-1 text-sm text-muted-foreground">
+            Categorize your post and add relevant tags.
           </p>
         </div>
 
-        <div className="grid gap-6 p-5 sm:grid-cols-2">
-          {/* Category */}
-          <div className="space-y-2">
-            <label htmlFor="category" className="text-sm font-medium">
-              Category
-            </label>
+        <div className="p-5">
+          <FieldGroup>
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Category */}
+              <Field>
+                <FieldLabel htmlFor="category">Category</FieldLabel>
 
-            <select
-              id="category"
-              name="category"
-              defaultValue={initialData?.category ?? ''}
-              required
-              className="h-11 w-full rounded-lg border bg-background px-3 text-sm outline-none focus:border-foreground"
-            >
-              <option value="" disabled>
-                Select category
-              </option>
+                <Select name="category" defaultValue={initialData?.category}>
+                  <SelectTrigger id="category" className="w-full">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
 
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <FieldDescription>
+                  Choose the category that best describes this post.
+                </FieldDescription>
+              </Field>
+
+              {/* Read Time */}
+              <Field>
+                <FieldLabel htmlFor="readTime">Read time</FieldLabel>
+
+                <Input
+                  id="readTime"
+                  name="readTime"
+                  type="text"
+                  defaultValue={initialData?.readTime}
+                  placeholder="5 min read"
+                />
+
+                <FieldDescription>
+                  Estimated reading time for this post.
+                </FieldDescription>
+              </Field>
+            </div>
+
+            {/* Tags */}
+            <Field>
+              <FieldLabel htmlFor="tags">Tags</FieldLabel>
+
+              <TagInput value={tags} onChange={setTags} />
+              {tags.map((tag, index) => (
+                <input
+                  key={`${tag}-${index}-hidden`}
+                  type="hidden"
+                  name="tags"
+                  value={tag}
+                />
               ))}
-            </select>
-          </div>
 
-          {/* Tags */}
-          <div className="space-y-2">
-            <label htmlFor="tags" className="text-sm font-medium">
-              Tags
-            </label>
-
-            <input
-              id="tags"
-              name="tags"
-              type="text"
-              defaultValue={initialData?.tags?.join(', ')}
-              placeholder="React, Next.js, TypeScript"
-              className="h-11 w-full rounded-lg border bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus:border-foreground"
-            />
-
-            <p className="text-xs text-muted-foreground">
-              Separate tags with commas.
-            </p>
-          </div>
+              <FieldDescription>
+                Select from the suggested tags.
+              </FieldDescription>
+            </Field>
+          </FieldGroup>
         </div>
       </section>
 
@@ -199,16 +245,18 @@ const PostFormFields = ({ initialData }: PostFormFieldsProps) => {
         <div className="border-b px-5 py-4">
           <h2 className="font-semibold">Cover image</h2>
 
-          <p className="mt-1 text-xs text-muted-foreground">
-            Add a cover image for your blog post.
+          <p className="mt-1 text-sm text-muted-foreground">
+            Add an image that represents your blog post.
           </p>
         </div>
 
-        <ImageUpload
-          value={initialData?.coverImage}
-          label="Cover image"
-          description="This image will be displayed as the cover of your blog post."
-        />
+        <div className="p-5">
+          <ImageUpload
+            value={initialData?.coverImage}
+            label="Cover image"
+            description="This image will be displayed as the cover of your blog post."
+          />
+        </div>
       </section>
 
       {/* Publishing */}
@@ -216,30 +264,74 @@ const PostFormFields = ({ initialData }: PostFormFieldsProps) => {
         <div className="border-b px-5 py-4">
           <h2 className="font-semibold">Publishing</h2>
 
-          <p className="mt-1 text-xs text-muted-foreground">
-            Control the visibility of your post.
+          <p className="mt-1 text-sm text-muted-foreground">
+            Control when and how this post becomes visible.
           </p>
         </div>
 
         <div className="p-5">
-          <label className="flex cursor-pointer items-start gap-3">
-            <input
-              type="checkbox"
-              name="published"
-              defaultChecked={initialData?.published}
-              className="mt-0.5 size-4 accent-foreground"
-            />
+          <FieldSet>
+            <FieldLegend variant="label">Status</FieldLegend>
 
-            <span>
-              <span className="block text-sm font-medium">
-                Publish this post
-              </span>
+            <FieldDescription>
+              Choose whether this post should be visible on your blog.
+            </FieldDescription>
 
-              <span className="mt-0.5 block text-xs text-muted-foreground">
-                Published posts will be visible on your public blog.
-              </span>
-            </span>
-          </label>
+            <FieldGroup className="mt-4 gap-3">
+              {statuses.map((status) => (
+                <Field
+                  key={status.value}
+                  orientation="horizontal"
+                  className="rounded-lg border p-4"
+                >
+                  <FieldContent>
+                    <FieldLabel htmlFor={`status-${status.value}`}>
+                      {status.label}
+                    </FieldLabel>
+
+                    <FieldDescription>{status.description}</FieldDescription>
+                  </FieldContent>
+
+                  <input
+                    id={`status-${status.value}`}
+                    type="radio"
+                    name="status"
+                    value={status.value}
+                    defaultChecked={
+                      stat === status.value ||
+                      (!stat && status.value === 'draft')
+                    }
+                    onChange={(event) =>
+                      onStatusChange(event.target.value as Post['status'])
+                    }
+                    className="size-4 accent-foreground"
+                  />
+                </Field>
+              ))}
+            </FieldGroup>
+          </FieldSet>
+
+          {/* Published At */}
+          <div className="mt-6 border-t pt-6">
+            <Field>
+              <FieldLabel htmlFor="publishedAt">Publication date</FieldLabel>
+
+              <Input
+                id="publishedAt"
+                name="publishedAt"
+                type="datetime-local"
+                defaultValue={
+                  initialData?.publishedAt
+                    ? initialData.publishedAt.slice(0, 16)
+                    : ''
+                }
+              />
+
+              <FieldDescription>
+                Set the date and time when the post should be published.
+              </FieldDescription>
+            </Field>
+          </div>
         </div>
       </section>
     </div>

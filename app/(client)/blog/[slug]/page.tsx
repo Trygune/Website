@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowLeft, CalendarDays, Clock3 } from 'lucide-react'
 import { getPostBySlug } from '@/services/posts'
+import { Badge } from '@/components/ui/badge'
 
 type BlogPostPageProps = {
   params: Promise<{
@@ -86,6 +87,23 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
             Written by{' '}
             <span className="font-medium text-foreground">TryGune</span>
           </p>
+
+          {/* Tags */}
+          {post.tags?.length > 0 && (
+            <div className="mt-8">
+              <div className="flex flex-wrap gap-2">
+                {post.tags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="rounded-md px-2.5 py-1 font-medium"
+                  >
+                    #{tag}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
         </header>
 
         {/* Divider */}

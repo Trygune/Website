@@ -20,6 +20,10 @@ export const getExperiences = (
   return api<ExperiencesResponse>(`/experiences${buildQuery(query)}`)
 }
 
+export const getExperienceById = (id: string): Promise<ExperienceResponse> => {
+  return api<ExperienceResponse>(`/experiences/id/${id}`)
+}
+
 export const createExperience = (
   data: Omit<Experience, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<ExperienceResponse> => {
@@ -36,7 +40,7 @@ export const updateExperience = (
   id: string,
   data: Partial<Omit<Experience, 'id' | 'createdAt' | 'updatedAt'>>
 ): Promise<ExperienceResponse> => {
-  return api<ExperienceResponse>(`/experiences/${id}`, {
+  return api<ExperienceResponse>(`/experiences/id/${id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -52,7 +56,7 @@ export const deleteExperience = (
 }> => {
   return api<{
     success: boolean
-  }>(`/experiences/${id}`, {
+  }>(`/experiences/id/${id}`, {
     method: 'DELETE',
   })
 }

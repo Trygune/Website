@@ -1,47 +1,58 @@
 'use client'
 
-import Link from 'next/link'
 import { useState } from 'react'
-import ConfirmDialog from '../shared/ConfirmDialog'
 import PostFormFields from './PostFormFields'
-
-type PostStatus = 'draft' | 'published'
-
-type PostFormData = {
-  title?: string
-  slug?: string
-  excerpt?: string
-  category?: string
-  tags?: string[]
-  content?: string
-  status?: PostStatus
-  coverImage?: string
-}
+import { Post } from '@/types/post'
+import { useRouter } from 'next/navigation'
+import { useCreatePost, useUpdatePost } from '@/hooks/usePosts'
 
 type PostFormProps = {
-  initialData?: PostFormData
+  initialData?: Post
   isEditing?: boolean
 }
 
-const categories = [
-  'React',
-  'Next.js',
-  'TypeScript',
-  'JavaScript',
-  'Node.js',
-  'Backend',
-  'Career',
-]
-
 const PostForm = ({ initialData, isEditing = false }: PostFormProps) => {
-  const [status, setStatus] = useState<PostStatus>(
+  const router = useRouter()
+
+  const [status, setStatus] = useState<Post['status']>(
     initialData?.status ?? 'draft'
   )
-  const [publishPost, setPublishPost] = useState<string | null>(null)
+
+  const createMutation = useCreatePost()
+  const updateMutation = useUpdatePost()
+
+  const isPending = createMutation.isPending || updateMutation.isPending
+
+  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const formData = new FormData(event.currentTarget)
+
+    formData.set('status', status)
+
+    try {
+      if (isEditing && initialData) {
+        await updateMutation.mutateAsync({
+          id: initialData.id,
+          data: formData,
+        })
+      } else {
+        await createMutation.mutateAsync(formData)
+      }
+
+      router.push('/admin/posts')
+    } catch (error) {
+      console.error('Failed to save post:', error)
+    }
+  }
 
   return (
-    <form className="space-y-8">
-      <PostFormFields initialData={initialData} />
+    <form className="space-y-8" onSubmit={handleSubmit}>
+      <PostFormFields
+        initialData={initialData}
+        status={status}
+        onStatusChange={setStatus}
+      />
 
       {/* Actions */}
       <div className="flex flex-col gap-4 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
@@ -52,39 +63,28 @@ const PostForm = ({ initialData, isEditing = false }: PostFormProps) => {
         </p>
 
         <div className="flex flex-col-reverse gap-3 sm:flex-row">
-          <Link
-            href="/admin/posts"
-            className="inline-flex h-11 items-center justify-center rounded-lg border px-5 text-sm font-medium transition-colors hover:bg-muted"
-          >
-            Cancel
-          </Link>
-
           <button
             type="button"
-            onClick={() => setPublishPost('title')}
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-foreground px-5 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
+            onClick={() => router.back()}
+            disabled={isPending}
+            className="h-10 rounded-lg border px-4 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {isEditing
-              ? 'Update post'
-              : status === 'published'
-                ? 'Publish post'
-                : 'Save draft'}
+            Cancel
           </button>
-          <ConfirmDialog
-            open={Boolean(publishPost)}
-            title="Publish post?"
-            description="This post will become visible on your public blog."
-            confirmLabel="Publish"
-            onClose={() => setPublishPost(null)}
-            onConfirm={async () => {
-              if (!publishPost) return
 
-              // بعداً:
-              // await publishPostApi(publishPost)
-
-              console.log('Publish:', publishPost)
-            }}
-          />
+          <button
+            type="submit"
+            disabled={isPending}
+            className="h-10 rounded-lg bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isPending
+              ? isEditing
+                ? 'Saving...'
+                : 'Creating...'
+              : isEditing
+                ? 'Save changes'
+                : 'Create project'}
+          </button>
         </div>
       </div>
     </form>

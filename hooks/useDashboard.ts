@@ -8,7 +8,7 @@ export const DASHBOARD_QUERY_KEY = ['Dashboard'] as const
 
 export const useDashboard = (query?: DashboardQuery) => {
   return useQuery({
-    queryKey: [DASHBOARD_QUERY_KEY, query],
+    queryKey: [...DASHBOARD_QUERY_KEY, query],
     queryFn: () => getDashboard(query),
   })
 }

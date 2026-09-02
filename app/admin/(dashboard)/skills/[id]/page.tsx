@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 import SkillForm from '@/components/admin/skills/SkillForm'
+import { getSkillById } from '@/services/skills'
 
 type EditSkillPageProps = {
   params: Promise<{
@@ -12,17 +13,32 @@ type EditSkillPageProps = {
 const EditSkillPage = async ({ params }: EditSkillPageProps) => {
   const { id } = await params
 
-  // TODO: Replace with API/TanStack Query
-  const skill = {
-    id,
-    name: 'React',
-    category: 'Frontend',
-    description: 'Building reusable and scalable user interfaces with React.',
-    icon: 'react',
-    level: 'Advanced' as const,
-    percent: 80,
-    featured: true,
-    order: 5,
+  const skill = await getSkillById(String(id))
+
+  if (!skill) {
+    return (
+      <main className="py-16">
+        <div className="mx-auto max-w-lg text-center">
+          <p className="text-sm font-medium text-muted-foreground">404</p>
+
+          <h1 className="mt-2 text-2xl font-bold tracking-tight">
+            Skill not found
+          </h1>
+
+          <p className="mt-3 text-sm text-muted-foreground">
+            The skill you are looking for does not exist.
+          </p>
+
+          <Link
+            href="/admin/skills"
+            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-foreground px-4 py-2.5 text-sm font-medium text-background"
+          >
+            <ArrowLeft className="size-4" />
+            Back to skills
+          </Link>
+        </div>
+      </main>
+    )
   }
 
   return (
@@ -47,9 +63,7 @@ const EditSkillPage = async ({ params }: EditSkillPageProps) => {
       </div>
 
       {/* Form */}
-      <div className="rounded-xl border bg-background p-6 sm:p-8">
-        <SkillForm initialData={skill} isEditing />
-      </div>
+      <SkillForm initialData={skill.data} isEditing />
     </div>
   )
 }

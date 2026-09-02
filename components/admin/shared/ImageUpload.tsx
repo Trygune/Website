@@ -153,13 +153,13 @@ const ImageUpload = ({
 
         <input
           id="image-url"
-          type="url"
+          type="text"
           value={preview.startsWith('blob:') ? '' : preview}
           onChange={(event) => {
             setPreview(event.target.value)
             onChange?.(event.target.value)
           }}
-          placeholder="https://example.com/image.jpg"
+          placeholder="example.com/image.jpg"
           className="h-10 w-full rounded-lg border bg-transparent px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
         />
       </div>

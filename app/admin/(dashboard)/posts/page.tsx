@@ -18,7 +18,7 @@ const PostsAdminPage = () => {
   const searchParams = useSearchParams()
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
   const sortParam = searchParams.get('sort')
-  const sort: PostSort = isPostSort(sortParam) ? sortParam : '-publishedAt'
+  const sort: PostSort = isPostSort(sortParam) ? sortParam : 'status,-createdAt'
 
   const { data, isPending, isError } = usePosts({
     page,

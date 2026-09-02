@@ -2,87 +2,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 import PostForm from '@/components/admin/posts/PostForm'
-
-const posts = [
-  {
-    id: '1',
-    title: 'Building Modern React Applications',
-    slug: 'building-modern-react-applications',
-    excerpt:
-      'A practical look at building modern React applications with a clean and maintainable architecture.',
-    category: 'react',
-    tags: ['React', 'TypeScript', 'Frontend'],
-    coverImage: '',
-    status: 'published' as const,
-    content: `# Building Modern React Applications
-
-React has become one of the most popular tools for building modern web applications.
-
-In this article, we'll look at some practical approaches to building React applications that are maintainable, scalable, and enjoyable to work with.
-
-## Component architecture
-
-A good component structure makes a project easier to understand and maintain.
-
-## State management
-
-Choose the simplest state management solution that fits your application.
-
-## Conclusion
-
-A clean architecture and consistent conventions can make a huge difference as your project grows.`,
-  },
-  {
-    id: '2',
-    title: 'What I Learned Building with Next.js',
-    slug: 'what-i-learned-building-with-nextjs',
-    excerpt:
-      'Lessons learned while building applications with the Next.js App Router.',
-    category: 'nextjs',
-    tags: ['Next.js', 'React', 'App Router'],
-    coverImage: '',
-    status: 'published' as const,
-    content: `# What I Learned Building with Next.js
-
-Next.js provides a powerful set of tools for building production-ready React applications.
-
-## Server and Client Components
-
-Understanding when to use each type of component is essential.
-
-## Routing
-
-The App Router provides a structured approach to application routing.
-
-## Conclusion
-
-Next.js makes it possible to build full-featured applications while keeping the architecture organized.`,
-  },
-  {
-    id: '3',
-    title: 'TypeScript for JavaScript Developers',
-    slug: 'typescript-for-javascript-developers',
-    excerpt:
-      'A practical introduction to TypeScript for developers who already know JavaScript.',
-    category: 'typescript',
-    tags: ['TypeScript', 'JavaScript'],
-    coverImage: '',
-    status: 'draft' as const,
-    content: `# TypeScript for JavaScript Developers
-
-TypeScript adds static typing and powerful developer tooling to JavaScript.
-
-## Why TypeScript?
-
-Types can help catch many mistakes before your application reaches production.
-
-## Getting started
-
-You don't need to learn every TypeScript feature before using it.
-
-Start with the basics and gradually introduce more advanced concepts.`,
-  },
-]
+import { getPostById } from '@/services/posts'
 
 type PostEditPageProps = {
   params: Promise<{
@@ -92,8 +12,7 @@ type PostEditPageProps = {
 
 const PostEditPage = async ({ params }: PostEditPageProps) => {
   const { id } = await params
-
-  const post = posts.find((post) => post.id === id)
+  const post = await getPostById(String(id))
 
   if (!post) {
     return (
@@ -143,7 +62,7 @@ const PostEditPage = async ({ params }: PostEditPageProps) => {
       </div>
 
       {/* Form */}
-      <PostForm isEditing initialData={post} />
+      <PostForm isEditing initialData={post.data} />
     </div>
   )
 }

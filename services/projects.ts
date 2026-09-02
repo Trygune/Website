@@ -23,29 +23,24 @@ export const getProjects = (
 export const getProjectBySlug = (slug: string): Promise<ProjectResponse> => {
   return api<ProjectResponse>(`/projects/${slug}`)
 }
+export const getProjectById = (id: string): Promise<ProjectResponse> => {
+  return api<ProjectResponse>(`/projects/id/${id}`)
+}
 
-export const createProject = (
-  data: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>
-): Promise<ProjectResponse> => {
+export const createProject = (data: FormData): Promise<ProjectResponse> => {
   return api<ProjectResponse>('/projects', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: data,
   })
 }
 
 export const updateProject = (
   id: string,
-  data: Partial<Omit<Project, 'id' | 'createdAt' | 'updatedAt'>>
+  data: FormData
 ): Promise<ProjectResponse> => {
-  return api<ProjectResponse>(`/projects/${id}`, {
+  return api<ProjectResponse>(`/projects/id/${id}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: data,
   })
 }
 
@@ -56,7 +51,7 @@ export const deleteProject = (
 }> => {
   return api<{
     success: boolean
-  }>(`/projects/${id}`, {
+  }>(`/projects/id/${id}`, {
     method: 'DELETE',
   })
 }
