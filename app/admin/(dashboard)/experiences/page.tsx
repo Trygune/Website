@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { BriefcaseBusiness, NotebookPen, Plus } from 'lucide-react'
+import { BriefcaseBusiness, NotebookPen, Plus, Search } from 'lucide-react'
 import EmptyState from '@/components/admin/shared/EmptyState'
 import { useState } from 'react'
 import ExperienceTable from '@/components/admin/experiences/ExperienceTable'
@@ -16,18 +16,23 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useDashboard } from '@/hooks/useDashboard'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
 import { isExperienceSort } from '@/components/admin/experiences/ExperienceValidator'
+import { ButtonGroup } from '@/components/ui/button-group'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 const ExperienceAdminPage = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
   const sortParam = searchParams.get('sort')
+  const search = searchParams.get('search') || undefined
   const sort: ExperienceSort = isExperienceSort(sortParam)
     ? sortParam
     : '-current,-startDate'
   const { data, isPending, isError } = useExperiences({
     page,
     sort,
+    search,
   })
   const {
     data: statData,
@@ -59,7 +64,16 @@ const ExperienceAdminPage = () => {
   const [deleteExperience, setDeleteExperience] = useState<Experience | null>(
     null
   )
-
+  const [searchInput, setSearchInput] = useState('')
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (searchInput) {
+      params.set('search', searchInput)
+    } else {
+      params.delete('search')
+    }
+    router.push(`?${params.toString()}`)
+  }
   const handleSort = (field: ExperienceSortField) => {
     const params = new URLSearchParams(searchParams.toString())
 
@@ -126,6 +140,25 @@ const ExperienceAdminPage = () => {
         <>
           {/* Stats */}
           <StatsGrid stats={stats} />
+
+          {/* Search */}
+          <ButtonGroup className="relative max-w-md w-full">
+            <Input
+              type="search"
+              id="input-button-group"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  handleSearch()
+                }
+              }}
+              placeholder="Type to search..."
+            />
+            <Button variant="outline" size="icon" onClick={handleSearch}>
+              <Search className="text-muted-foreground" />
+            </Button>
+          </ButtonGroup>
 
           <ExperienceTable
             experiences={experiences}

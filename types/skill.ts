@@ -27,6 +27,7 @@ export type SkillSort =
 
 export type SkillQuery = {
   sort?: SkillSort
+  search?: string
   featured?: boolean
   category?: string
   level?: Skill['level']

@@ -12,17 +12,22 @@ import Pagination from '@/components/shared/Pagination'
 import { useDashboard } from '@/hooks/useDashboard'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
 import { isPostSort } from '@/components/admin/posts/PostValidator'
+import { ButtonGroup } from '@/components/ui/button-group'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 const PostsAdminPage = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
   const sortParam = searchParams.get('sort')
+  const search = searchParams.get('search') || undefined
   const sort: PostSort = isPostSort(sortParam) ? sortParam : 'status,-createdAt'
 
   const { data, isPending, isError } = usePosts({
     page,
     sort,
+    search,
   })
   const {
     data: statData,
@@ -56,7 +61,16 @@ const PostsAdminPage = () => {
     },
   ]
   const [deletePost, setDeletePost] = useState<Post | null>(null)
-
+  const [searchInput, setSearchInput] = useState('')
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (searchInput) {
+      params.set('search', searchInput)
+    } else {
+      params.delete('search')
+    }
+    router.push(`?${params.toString()}`)
+  }
   const handleSort = (field: PostSortField) => {
     const params = new URLSearchParams(searchParams.toString())
 
@@ -125,15 +139,23 @@ const PostsAdminPage = () => {
           <StatsGrid stats={stats} />
 
           {/* Search */}
-          <div className="relative max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-
-            <input
+          <ButtonGroup className="relative max-w-md w-full">
+            <Input
               type="search"
-              placeholder="Search posts..."
-              className="h-11 w-full rounded-lg border bg-background pl-9 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+              id="input-button-group"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  handleSearch()
+                }
+              }}
+              placeholder="Type to search..."
             />
-          </div>
+            <Button variant="outline" size="icon" onClick={handleSearch}>
+              <Search className="text-muted-foreground" />
+            </Button>
+          </ButtonGroup>
 
           {/* Posts table */}
           <PostTable

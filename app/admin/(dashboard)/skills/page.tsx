@@ -13,13 +13,17 @@ import { useDashboard } from '@/hooks/useDashboard'
 import SkillTable from '@/components/admin/skills/SkillTable'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { isSkillSort } from '@/components/admin/skills/SkillValidator'
+import { ButtonGroup } from '@/components/ui/button-group'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 const SkillsAdminPage = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const sortParam = searchParams.get('sort')
   const sort: SkillSort = isSkillSort(sortParam) ? sortParam : 'order'
-  const { data, isPending, isError } = useSkills({ sort })
+  const search = searchParams.get('search') || undefined
+  const { data, isPending, isError } = useSkills({ sort, search })
   const {
     data: statData,
     isPending: statIsPending,
@@ -47,7 +51,16 @@ const SkillsAdminPage = () => {
       length: status.featured,
     },
   ]
-
+  const [searchInput, setSearchInput] = useState('')
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (searchInput) {
+      params.set('search', searchInput)
+    } else {
+      params.delete('search')
+    }
+    router.push(`?${params.toString()}`)
+  }
   const handleSort = (field: SkillSortField) => {
     const params = new URLSearchParams(searchParams.toString())
 
@@ -115,15 +128,24 @@ const SkillsAdminPage = () => {
           <StatsGrid stats={stats} />
 
           {/* Search */}
-          <div className="relative max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-
-            <input
+          {/* Search */}
+          <ButtonGroup className="relative max-w-md w-full">
+            <Input
               type="search"
-              placeholder="Search skills..."
-              className="h-11 w-full rounded-lg border bg-background pl-9 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+              id="input-button-group"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  handleSearch()
+                }
+              }}
+              placeholder="Type to search..."
             />
-          </div>
+            <Button variant="outline" size="icon" onClick={handleSearch}>
+              <Search className="text-muted-foreground" />
+            </Button>
+          </ButtonGroup>
 
           {/* Table */}
           <SkillTable

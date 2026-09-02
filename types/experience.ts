@@ -39,6 +39,7 @@ export type ExperienceQuery = {
   page?: number
   limit?: number
   sort?: ExperienceSort
+  search?: string
   current?: boolean
   type?: Experience['type']
   location?: string

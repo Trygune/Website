@@ -4,7 +4,7 @@ export const buildQuery = (query?: Record<string, unknown>): string => {
   const params = new URLSearchParams()
 
   Object.entries(query).forEach(([key, value]) => {
-    if (value === undefined || value === null) return
+    if (value === undefined || value === null || value === '') return
 
     params.set(key, String(value))
   })

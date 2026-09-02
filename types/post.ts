@@ -27,6 +27,7 @@ export type PostSort =
 export type PostQuery = {
   page?: number
   limit?: number
+  search?: string
   sort?: PostSort
   status?: Post['status']
   category?: string

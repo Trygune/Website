@@ -12,18 +12,23 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
 import { useDashboard } from '@/hooks/useDashboard'
 import { isProjectSort } from '@/components/admin/projects/ProjectValidator'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { ButtonGroup } from '@/components/ui/button-group'
 
 const ProjectsAdminPage = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
   const sortParam = searchParams.get('sort')
+  const search = searchParams.get('search') || undefined
   const sort: ProjectSort = isProjectSort(sortParam)
     ? sortParam
     : '-year,-createdAt'
   const { data, isPending, isError } = useProjects({
     page,
     sort,
+    search,
   })
   const {
     data: statData,
@@ -57,6 +62,7 @@ const ProjectsAdminPage = () => {
     },
   ]
   const [deleteProject, setDeleteProject] = useState<Project | null>(null)
+  const [searchInput, setSearchInput] = useState('')
 
   const handleSort = (field: ProjectSortField) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -73,6 +79,16 @@ const ProjectsAdminPage = () => {
 
     params.set('page', '1')
 
+    router.push(`?${params.toString()}`)
+  }
+
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (searchInput) {
+      params.set('search', searchInput)
+    } else {
+      params.delete('search')
+    }
     router.push(`?${params.toString()}`)
   }
 
@@ -127,15 +143,23 @@ const ProjectsAdminPage = () => {
           <StatsGrid stats={stats} />
 
           {/* Search */}
-          <div className="relative max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-
-            <input
+          <ButtonGroup className="relative max-w-md w-full">
+            <Input
               type="search"
-              placeholder="Search projects..."
-              className="h-11 w-full rounded-lg border bg-background pl-9 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+              id="input-button-group"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  handleSearch()
+                }
+              }}
+              placeholder="Type to search..."
             />
-          </div>
+            <Button variant="outline" size="icon" onClick={handleSearch}>
+              <Search className="text-muted-foreground" />
+            </Button>
+          </ButtonGroup>
 
           {/* Projects */}
           <ProjectTable

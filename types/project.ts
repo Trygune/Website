@@ -36,6 +36,7 @@ export type ProjectQuery = {
   page?: number
   limit?: number
   sort?: ProjectSort
+  search?: string
   featured?: boolean
   status?: Project['status']
   role?: string
