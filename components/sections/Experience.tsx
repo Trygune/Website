@@ -3,8 +3,8 @@ import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 
 const Experience = async () => {
-  const data = await getExperiences()
-  const experiences = data?.data.slice(0, 3) ?? []
+  const data = await getExperiences({ limit: 3 })
+  const experiences = data?.data ?? []
   return (
     <section id="experience" className="scroll-mt-24 border-t py-24 sm:py-32">
       {/* Header */}

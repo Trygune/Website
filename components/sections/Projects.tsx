@@ -6,8 +6,9 @@ import { getProjects } from '@/services/projects'
 const Projects = async () => {
   const data = await getProjects({
     status: 'published',
+    limit: 3,
   })
-  const projects = data?.data.slice(0, 3) ?? []
+  const projects = data?.data ?? []
   return (
     <section id="projects" className="scroll-mt-24 border-t py-24 sm:py-32">
       {/* Header */}
