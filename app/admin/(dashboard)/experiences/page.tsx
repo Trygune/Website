@@ -19,6 +19,18 @@ import { isExperienceSort } from '@/components/admin/experiences/ExperienceValid
 import { ButtonGroup } from '@/components/ui/button-group'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+} from '@/components/ui/combobox'
+import { useSkills } from '@/hooks/useSkills'
 
 const ExperienceAdminPage = () => {
   const router = useRouter()
@@ -26,6 +38,7 @@ const ExperienceAdminPage = () => {
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
   const sortParam = searchParams.get('sort')
   const search = searchParams.get('search') || undefined
+  const technologies = searchParams.get('technologies') || undefined
   const sort: ExperienceSort = isExperienceSort(sortParam)
     ? sortParam
     : '-current,-startDate'
@@ -33,15 +46,22 @@ const ExperienceAdminPage = () => {
     page,
     sort,
     search,
+    technologies,
   })
   const {
     data: statData,
     isPending: statIsPending,
     isError: statIsError,
   } = useDashboard({ categories: 'experience' })
+  const {
+    data: skillData,
+    isPending: skillIsPending,
+    isError: skillIsError,
+  } = useSkills()
   const deleteMutation = useDeleteExperience()
   const experiences = data?.data ?? []
   const pagination = data?.pagination
+  const skills = skillData?.data.map((s) => s.name)
   const hasExperiences = experiences.length > 0
   const status = statData?.data.experience ?? {
     total: 0,
@@ -65,12 +85,18 @@ const ExperienceAdminPage = () => {
     null
   )
   const [searchInput, setSearchInput] = useState('')
+  const [value, setValue] = useState<string[]>([])
   const handleSearch = () => {
     const params = new URLSearchParams(searchParams.toString())
     if (searchInput) {
       params.set('search', searchInput)
     } else {
       params.delete('search')
+    }
+    if (value.length !== 0) {
+      params.set('technologies', value.toString())
+    } else {
+      params.delete('technologies')
     }
     router.push(`?${params.toString()}`)
   }
@@ -92,7 +118,7 @@ const ExperienceAdminPage = () => {
     router.push(`?${params.toString()}`)
   }
 
-  if (isError || statIsError) {
+  if (isError || statIsError || skillIsError) {
     return (
       <div className="rounded-xl border p-6">
         <h2 className="font-semibold">Failed to load projects</h2>
@@ -104,7 +130,7 @@ const ExperienceAdminPage = () => {
     )
   }
 
-  if (isPending || statIsPending) {
+  if (isPending || statIsPending || skillIsPending) {
     return (
       <div className="space-y-4">
         <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
@@ -142,23 +168,57 @@ const ExperienceAdminPage = () => {
           <StatsGrid stats={stats} />
 
           {/* Search */}
-          <ButtonGroup className="relative max-w-md w-full">
-            <Input
-              type="search"
-              id="input-button-group"
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  handleSearch()
-                }
-              }}
-              placeholder="Type to search..."
-            />
-            <Button variant="outline" size="icon" onClick={handleSearch}>
-              <Search className="text-muted-foreground" />
-            </Button>
-          </ButtonGroup>
+          <div className="grid grid-cols-3 gap-4">
+            <ButtonGroup className="relative w-full">
+              <Input
+                type="search"
+                id="input-button-group"
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    handleSearch()
+                  }
+                }}
+                placeholder="Type to search..."
+              />
+              <Button variant="outline" size="icon" onClick={handleSearch}>
+                <Search className="text-muted-foreground" />
+              </Button>
+            </ButtonGroup>
+            <div className="w-full">
+              <Combobox
+                items={skills}
+                multiple
+                value={value}
+                onValueChange={setValue}
+              >
+                <ComboboxChips>
+                  <ComboboxValue>
+                    {value.map((item, index) => (
+                      <ComboboxChip key={`ComboboxChip-${item}-${index}`}>
+                        {item}
+                      </ComboboxChip>
+                    ))}
+                  </ComboboxValue>
+                  <ComboboxChipsInput placeholder="Add technology" />
+                </ComboboxChips>
+                <ComboboxContent>
+                  <ComboboxEmpty>No items found.</ComboboxEmpty>
+                  <ComboboxList>
+                    {(item, index) => (
+                      <ComboboxItem
+                        key={`ComboboxItem-${item}-${index}`}
+                        value={item}
+                      >
+                        {item}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </div>
+          </div>
 
           <ExperienceTable
             experiences={experiences}
