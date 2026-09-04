@@ -3,11 +3,29 @@
 import Link from 'next/link'
 import { ArrowLeft, LockKeyhole } from 'lucide-react'
 import { login } from '@/services/auth'
-import { SubmitEvent } from 'react'
+import { SubmitEvent, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useMe } from '@/hooks/useAuth'
 
 const AdminLoginPage = () => {
   const router = useRouter()
+  const { data, isPending, isError } = useMe()
+
+  useEffect(() => {
+    if (isError) return
+
+    if (data && data.success && data.user) {
+      return router.replace('/admin')
+    }
+  }, [isPending, isError, data, router])
+
+  if (isPending) {
+    return <div>Loading...</div>
+  }
+
+  if (!isError && data && data.success && data.user) {
+    return <div>Redirecting...</div>
+  }
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()

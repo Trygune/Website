@@ -1,11 +1,42 @@
+'use client'
+
 import AdminHeader from '@/components/admin/layout/AdminHeader'
 import AdminSidebar from '@/components/admin/layout/AdminSidebar'
+import { useMe } from '@/hooks/useAuth'
+import { logout } from '@/services/auth'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 type AdminLayoutProps = {
   children: React.ReactNode
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
+  const router = useRouter()
+  const { data, isPending, isError } = useMe()
+
+  useEffect(() => {
+    if (!isError) return
+
+    const handleUnauthorized = async () => {
+      try {
+        await logout()
+      } finally {
+        router.replace('/admin/login')
+      }
+    }
+
+    handleUnauthorized()
+  }, [isError, router])
+
+  if (isPending) {
+    return <div>Loading...</div>
+  }
+
+  if (isError || !data || !data.success || !data.user) {
+    return <div>Redirecting...</div>
+  }
+
   return (
     <div className="min-h-screen bg-muted/30">
       <AdminSidebar />
