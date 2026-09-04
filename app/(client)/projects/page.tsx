@@ -1,15 +1,22 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-
 import ProjectGrid from '@/components/projects/ProjectGrid'
 import { getProjects } from '@/services/projects'
 import Pagination from '@/components/shared/Pagination'
+import { createMetadata } from '@/lib/seo/metadata'
 
 type ProjectPageProps = {
   searchParams: Promise<{
     page?: string
   }>
 }
+
+export const metadata = createMetadata({
+  title: 'Projects',
+  description:
+    'Explore my web development projects built with React, Next.js, TypeScript, and modern web technologies.',
+  path: '/projects',
+})
 
 const ProjectsPage = async ({ searchParams }: ProjectPageProps) => {
   const { page } = await searchParams

@@ -1,13 +1,36 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-
 import ProjectDetails from '@/components/projects/ProjectDetails'
 import { getProjectBySlug } from '@/services/projects'
+import { createMetadata } from '@/lib/seo/metadata'
 
 type ProjectPageProps = {
   params: Promise<{
     slug: string
   }>
+}
+
+export const generateMetadata = async ({
+  params,
+}: ProjectPageProps): Promise<Metadata> => {
+  const { slug } = await params
+
+  try {
+    const { data: project } = await getProjectBySlug(slug)
+
+    return createMetadata({
+      title: project.title,
+      description: project.description,
+      path: `/projects/${slug}`,
+    })
+  } catch {
+    return createMetadata({
+      title: 'Project',
+      description: 'Explore my web development projects.',
+      path: `/projects/${slug}`,
+    })
+  }
 }
 
 const ProjectPage = async ({ params }: ProjectPageProps) => {

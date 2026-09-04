@@ -1,12 +1,37 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, CalendarDays, Clock3 } from 'lucide-react'
 import { getPostBySlug } from '@/services/posts'
 import { Badge } from '@/components/ui/badge'
+import { createMetadata } from '@/lib/seo/metadata'
 
 type BlogPostPageProps = {
   params: Promise<{
     slug: string
   }>
+}
+
+export const generateMetadata = async ({
+  params,
+}: BlogPostPageProps): Promise<Metadata> => {
+  const { slug } = await params
+
+  try {
+    const { data: post } = await getPostBySlug(slug)
+
+    return createMetadata({
+      title: post.title,
+      description: post.excerpt,
+      path: `/blog/${slug}`,
+    })
+  } catch {
+    return createMetadata({
+      title: 'Blog Post',
+      description:
+        'Read articles about web development and modern web technologies.',
+      path: `/blog/${slug}`,
+    })
+  }
 }
 
 const BlogPostPage = async ({ params }: BlogPostPageProps) => {

@@ -1,7 +1,14 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
-
 import { getSkills } from '@/services/skills'
+import { createMetadata } from '@/lib/seo/metadata'
+
+export const metadata = createMetadata({
+  title: 'Skills',
+  description:
+    'Explore my technical skills and experience with React, Next.js, TypeScript, JavaScript, and modern web development technologies.',
+  path: '/skills',
+})
 
 const SkillsPage = async () => {
   const { data: skills } = await getSkills()

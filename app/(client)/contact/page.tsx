@@ -1,5 +1,13 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight, Mail } from 'lucide-react'
+import { createMetadata } from '@/lib/seo/metadata'
+
+export const metadata = createMetadata({
+  title: 'Contact',
+  description:
+    'Get in touch with Farbod for web development opportunities, collaborations, and project inquiries.',
+  path: '/contact',
+})
 
 const ContactPage = () => {
   return (

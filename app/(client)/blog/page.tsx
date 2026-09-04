@@ -2,12 +2,20 @@ import Link from 'next/link'
 import { ArrowUpRight, CalendarDays, Clock3 } from 'lucide-react'
 import { getPosts } from '@/services/posts'
 import Pagination from '@/components/shared/Pagination'
+import { createMetadata } from '@/lib/seo/metadata'
 
 type BlogPageProps = {
   searchParams: Promise<{
     page?: string
   }>
 }
+
+export const metadata = createMetadata({
+  title: 'Blog',
+  description:
+    'Read articles and insights about front-end development, React, Next.js, TypeScript, and modern web technologies.',
+  path: '/blog',
+})
 
 const BlogPage = async ({ searchParams }: BlogPageProps) => {
   const { page } = await searchParams
