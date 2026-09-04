@@ -6,7 +6,14 @@ const proxy = (request: NextRequest) => {
   const token = request.cookies.get('access_token')?.value
   console.log(token)
 
-  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
+  if (
+    pathname.startsWith('/admin') &&
+    !(
+      pathname === '/admin/login' ||
+      pathname === '/admin/forgot-password' ||
+      pathname.startsWith('/admin/reset-password')
+    )
+  ) {
     if (!token) {
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
