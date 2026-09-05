@@ -1,15 +1,66 @@
+'use client'
+
 import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight, Mail } from 'lucide-react'
-import { createMetadata } from '@/lib/seo/metadata'
+import { useState } from 'react'
 
-export const metadata = createMetadata({
-  title: 'Contact',
-  description:
-    'Get in touch with Farbod for web development opportunities, collaborations, and project inquiries.',
-  path: '/contact',
-})
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { sendContactMessage } from '@/services/contact'
 
 const ContactPage = () => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    setIsLoading(true)
+    setError('')
+    setIsSubmitted(false)
+
+    const form = e.currentTarget
+    const formData = new FormData(form)
+
+    const website = formData.get('website') as string
+
+    // Honeypot: bots may fill this hidden field
+    if (website) {
+      setIsLoading(false)
+      setIsSubmitted(true)
+      form.reset()
+      return
+    }
+
+    const data = {
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      subject: formData.get('subject') as string,
+      message: formData.get('message') as string,
+    }
+
+    try {
+      await sendContactMessage(data)
+
+      setIsSubmitted(true)
+      form.reset()
+    } catch (error) {
+      console.error('Contact form failed:', error)
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Something went wrong. Please try again.'
+      )
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <main className="py-16 sm:py-24">
       {/* Back */}
@@ -62,79 +113,128 @@ const ContactPage = () => {
         </div>
 
         {/* Form */}
-        <form className="space-y-6">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">
-                Name
-              </label>
+        <Card className="border shadow-sm">
+          <CardContent className="p-6 sm:p-8">
+            {isSubmitted ? (
+              <div className="flex min-h-[500px] flex-col items-center justify-center text-center">
+                <div className="flex size-12 items-center justify-center rounded-full border">
+                  <Mail className="size-5" />
+                </div>
 
-              <input
-                id="name"
-                name="name"
-                type="text"
-                autoComplete="name"
-                placeholder="Your name"
-                required
-                className="h-12 w-full rounded-lg border bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
-              />
-            </div>
+                <h2 className="mt-5 text-xl font-semibold">
+                  Message sent successfully
+                </h2>
 
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
+                <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
+                  Thanks for reaching out. I&apos;ll get back to you as soon as
+                  possible.
+                </p>
 
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                required
-                className="h-12 w-full rounded-lg border bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
-              />
-            </div>
-          </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-6"
+                  onClick={() => setIsSubmitted(false)}
+                >
+                  Send another message
+                </Button>
+              </div>
+            ) : (
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                {/* Honeypot */}
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="absolute -left-[9999px] h-0 w-0 overflow-hidden"
+                />
 
-          <div className="space-y-2">
-            <label htmlFor="subject" className="text-sm font-medium">
-              Subject
-            </label>
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name</Label>
 
-            <input
-              id="subject"
-              name="subject"
-              type="text"
-              placeholder="What would you like to talk about?"
-              required
-              className="h-12 w-full rounded-lg border bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
-            />
-          </div>
+                    <Input
+                      id="name"
+                      name="name"
+                      type="text"
+                      autoComplete="name"
+                      placeholder="Your name"
+                      required
+                      maxLength={50}
+                      className="h-12"
+                    />
+                  </div>
 
-          <div className="space-y-2">
-            <label htmlFor="message" className="text-sm font-medium">
-              Message
-            </label>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
 
-            <textarea
-              id="message"
-              name="message"
-              rows={8}
-              placeholder="Tell me about your project or opportunity..."
-              required
-              className="w-full resize-none rounded-lg border bg-transparent px-4 py-3 text-sm leading-6 outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
-            />
-          </div>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="you@example.com"
+                      required
+                      maxLength={100}
+                      className="h-12"
+                    />
+                  </div>
+                </div>
 
-          <button
-            type="submit"
-            className="group inline-flex items-center gap-2 rounded-lg bg-foreground px-6 py-3 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
-          >
-            Send message
-            <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </button>
-        </form>
+                <div className="space-y-2">
+                  <Label htmlFor="subject">Subject</Label>
+
+                  <Input
+                    id="subject"
+                    name="subject"
+                    type="text"
+                    placeholder="What would you like to talk about?"
+                    required
+                    maxLength={150}
+                    className="h-12"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message</Label>
+
+                  <Textarea
+                    id="message"
+                    name="message"
+                    rows={8}
+                    placeholder="Tell me about your project or opportunity..."
+                    required
+                    maxLength={2000}
+                    className="resize-none leading-6"
+                  />
+                </div>
+
+                {error && (
+                  <div
+                    role="alert"
+                    className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"
+                  >
+                    {error}
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="group h-12 gap-2 px-6"
+                >
+                  {isLoading ? 'Sending...' : 'Send message'}
+
+                  {!isLoading && (
+                    <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  )}
+                </Button>
+              </form>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </main>
   )
