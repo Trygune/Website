@@ -8,13 +8,13 @@ import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import { useDeletePost, usePosts } from '@/hooks/usePosts'
 import { Post, PostSort, PostSortField } from '@/types/post'
 import { useRouter, useSearchParams } from 'next/navigation'
-import Pagination from '@/components/shared/Pagination'
 import { useDashboard } from '@/hooks/useDashboard'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
 import { isPostSort } from '@/components/admin/posts/PostValidator'
 import { ButtonGroup } from '@/components/ui/button-group'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import AppPagination from '@/components/shared/AppPagination'
 
 const PostsAdminPage = () => {
   const router = useRouter()
@@ -164,7 +164,7 @@ const PostsAdminPage = () => {
               sort={sort}
               onSort={handleSort}
             />
-            <Pagination pagination={pagination} baseUrl="/admin/posts" />
+            <AppPagination pagination={pagination} baseUrl="/admin/posts" />
             <DeleteDialog
               open={Boolean(deletePost)}
               title="Delete post"

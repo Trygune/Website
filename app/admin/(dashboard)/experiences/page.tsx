@@ -11,7 +11,6 @@ import {
   ExperienceSort,
   ExperienceSortField,
 } from '@/types/experience'
-import Pagination from '@/components/shared/Pagination'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useDashboard } from '@/hooks/useDashboard'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
@@ -31,6 +30,7 @@ import {
   ComboboxValue,
 } from '@/components/ui/combobox'
 import { useSkills } from '@/hooks/useSkills'
+import AppPagination from '@/components/shared/AppPagination'
 
 const ExperienceAdminPage = () => {
   const router = useRouter()
@@ -226,7 +226,10 @@ const ExperienceAdminPage = () => {
               sort={sort}
               onSort={handleSort}
             />
-            <Pagination pagination={pagination} baseUrl="/admin/experiences" />
+            <AppPagination
+              pagination={pagination}
+              baseUrl="/admin/experiences"
+            />
             <DeleteDialog
               open={Boolean(deleteExperience)}
               title="Delete experience"

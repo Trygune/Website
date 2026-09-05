@@ -1,8 +1,8 @@
 import ProjectGrid from '@/components/projects/ProjectGrid'
 import { getProjects } from '@/services/projects'
-import Pagination from '@/components/shared/Pagination'
 import { createMetadata } from '@/lib/seo/metadata'
 import AppBreadCrumb from '@/components/shared/AppBreadCrumb'
+import AppPagination from '@/components/shared/AppPagination'
 
 type ProjectPageProps = {
   searchParams: Promise<{
@@ -51,7 +51,7 @@ const ProjectsPage = async ({ searchParams }: ProjectPageProps) => {
         <ProjectGrid projects={projects} />
       </section>
 
-      <Pagination pagination={pagination} baseUrl="/projects" />
+      <AppPagination pagination={pagination} baseUrl="/projects" />
     </>
   )
 }

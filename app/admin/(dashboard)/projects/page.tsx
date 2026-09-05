@@ -7,7 +7,6 @@ import EmptyState from '@/components/admin/shared/EmptyState'
 import ProjectTable from '@/components/admin/projects/ProjectTable'
 import { useDeleteProject, useProjects } from '@/hooks/useProjects'
 import { Project, ProjectSort, ProjectSortField } from '@/types/project'
-import Pagination from '@/components/shared/Pagination'
 import { useRouter, useSearchParams } from 'next/navigation'
 import StatsGrid from '@/components/admin/dashboard/StatsGrid'
 import { useDashboard } from '@/hooks/useDashboard'
@@ -27,6 +26,7 @@ import {
   ComboboxValue,
 } from '@/components/ui/combobox'
 import { useSkills } from '@/hooks/useSkills'
+import AppPagination from '@/components/shared/AppPagination'
 
 const ProjectsAdminPage = () => {
   const router = useRouter()
@@ -43,6 +43,7 @@ const ProjectsAdminPage = () => {
     sort,
     search,
     technologies,
+    limit: 1,
   })
   const {
     data: statData,
@@ -228,7 +229,7 @@ const ProjectsAdminPage = () => {
               sort={sort}
               onSort={handleSort}
             />
-            <Pagination pagination={pagination} baseUrl="/admin/projects" />
+            <AppPagination pagination={pagination} baseUrl="/admin/projects" />
             <DeleteDialog
               open={Boolean(deleteProject)}
               title="Delete project"

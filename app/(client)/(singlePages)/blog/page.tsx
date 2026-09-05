@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { ArrowUpRight, CalendarDays, Clock3 } from 'lucide-react'
 import { getPosts } from '@/services/posts'
-import Pagination from '@/components/shared/Pagination'
 import { createMetadata } from '@/lib/seo/metadata'
 import AppBreadCrumb from '@/components/shared/AppBreadCrumb'
+import AppPagination from '@/components/shared/AppPagination'
 
 type BlogPageProps = {
   searchParams: Promise<{
@@ -105,7 +105,7 @@ const BlogPage = async ({ searchParams }: BlogPageProps) => {
         </p>
       </div>
 
-      <Pagination pagination={pagination} baseUrl="/blog" />
+      <AppPagination pagination={pagination} baseUrl="/blog" />
     </>
   )
 }
