@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { forgotPassword } from '@/services/auth'
 
 const ForgotPasswordPage = () => {
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -22,8 +23,7 @@ const ForgotPasswordPage = () => {
     try {
       setIsLoading(true)
 
-      // TODO: connect to forgotPassword service
-      console.log(email)
+      await forgotPassword(email)
 
       setIsSubmitted(true)
     } catch (error) {

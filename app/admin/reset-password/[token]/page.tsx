@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { resetPassword } from '@/services/auth'
 
 type ResetPasswordPageProps = {
   params: Promise<{
@@ -33,8 +34,7 @@ const ResetPasswordPage = ({ params }: ResetPasswordPageProps) => {
 
       const { token } = await params
 
-      // TODO: connect to resetPassword service
-      console.log({
+      await resetPassword({
         token,
         password,
       })
