@@ -6,16 +6,7 @@ import { useState } from 'react'
 import MobileMenu from './MobileMenu'
 import LinkedinIcon from '../icons/LinkedinIcon'
 import GithubIcon from '../icons/GithubIcon'
-
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/projects', label: 'Projects' },
-  { href: '/skills', label: 'Skills' },
-  { href: '/experiences', label: 'Experiences' },
-  { href: '/contact', label: 'Contact' },
-  { href: '/blog', label: 'Blog' },
-]
+import { navLinks } from './NavLinks'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -52,7 +43,7 @@ const Navbar = () => {
         {/* Actions */}
         <div className="flex items-center gap-2">
           <Link
-            href="https://github.com"
+            href="https://github.com/Trygune"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
@@ -62,7 +53,7 @@ const Navbar = () => {
           </Link>
 
           <Link
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/in/farbod-daneshmandfard"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"

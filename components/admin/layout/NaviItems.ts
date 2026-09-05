@@ -4,6 +4,7 @@ import {
   FileText,
   FolderKanban,
   LayoutDashboard,
+  MessageCircle,
 } from 'lucide-react'
 
 export const navItems = [
@@ -31,5 +32,10 @@ export const navItems = [
     label: 'Experiences',
     href: '/admin/experiences',
     icon: BriefcaseBusiness,
+  },
+  {
+    label: 'Contact',
+    href: '/admin/contact',
+    icon: MessageCircle,
   },
 ]

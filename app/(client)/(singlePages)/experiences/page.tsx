@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { ArrowLeft, ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { getExperiences } from '@/services/experiences'
 import { createMetadata } from '@/lib/seo/metadata'
+import AppBreadCrumb from '@/components/shared/AppBreadCrumb'
 
 export const metadata = createMetadata({
   title: 'Experience',
@@ -13,15 +14,8 @@ export const metadata = createMetadata({
 const ExperiencePage = async () => {
   const { data: experiences } = await getExperiences()
   return (
-    <main className="py-16 sm:py-24">
-      {/* Back */}
-      <Link
-        href="/"
-        className="group mb-12 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-        Back home
-      </Link>
+    <>
+      <AppBreadCrumb current="Experience" />
 
       {/* Header */}
       <header className="max-w-3xl">
@@ -72,7 +66,8 @@ const ExperiencePage = async () => {
                   </div>
 
                   <span className="w-fit rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground">
-                    {experience.type}
+                    {experience.type.charAt(0).toUpperCase() +
+                      experience.type.slice(1)}
                   </span>
                 </div>
 
@@ -140,7 +135,7 @@ const ExperiencePage = async () => {
           </Link>
         </div>
       </section>
-    </main>
+    </>
   )
 }
 

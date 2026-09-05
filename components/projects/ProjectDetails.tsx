@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, ArrowUpRight, ExternalLink } from 'lucide-react'
+import { ArrowUpRight, ExternalLink } from 'lucide-react'
 
 import type { Project } from '@/types/project'
 
@@ -10,16 +10,7 @@ type ProjectDetailsProps = {
 
 const ProjectDetails = ({ project }: ProjectDetailsProps) => {
   return (
-    <article className="py-16 sm:py-24">
-      {/* Back */}
-      <Link
-        href="/projects"
-        className="group mb-10 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-        Back to projects
-      </Link>
-
+    <article>
       {/* Header */}
       <header className="max-w-4xl">
         <p className="mb-4 text-sm font-medium uppercase tracking-widest text-muted-foreground">

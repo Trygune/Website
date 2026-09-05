@@ -120,71 +120,71 @@ const SkillsAdminPage = () => {
           New skill
         </Link>
       </div>
+      <div className="space-y-5">
+        {/* Stats */}
+        <StatsGrid stats={stats} />
 
-      {/* Content */}
-      {hasSkills ? (
-        <section className="space-y-5">
-          {/* Stats */}
-          <StatsGrid stats={stats} />
-
-          {/* Search */}
-          {/* Search */}
-          <ButtonGroup className="relative max-w-md w-full">
-            <Input
-              type="search"
-              id="input-button-group"
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  handleSearch()
-                }
-              }}
-              placeholder="Type to search..."
-            />
-            <Button variant="outline" size="icon" onClick={handleSearch}>
-              <Search className="text-muted-foreground" />
-            </Button>
-          </ButtonGroup>
-
-          {/* Table */}
-          <SkillTable
-            skills={skills}
-            onDelete={setDeleteSkill}
-            sort={sort}
-            onSort={handleSort}
-          />
-
-          {/* Delete Dialog */}
-          <DeleteDialog
-            open={Boolean(deleteSkill)}
-            title="Delete skill"
-            description="This skill will be permanently removed from your portfolio."
-            itemName={deleteSkill?.name}
-            onClose={() => setDeleteSkill(null)}
-            onConfirm={async () => {
-              if (!deleteSkill) return
-
-              try {
-                await deleteMutation.mutateAsync(deleteSkill.id)
-                setDeleteSkill(null)
-              } catch {
-                // Error is handled by the mutation.
+        {/* Search */}
+        <ButtonGroup className="relative max-w-md w-full">
+          <Input
+            type="search"
+            id="input-button-group"
+            value={searchInput}
+            onChange={(event) => setSearchInput(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                handleSearch()
               }
             }}
+            placeholder="Type to search..."
           />
-        </section>
-      ) : (
-        <EmptyState
-          icon={Code2}
-          title="No skills yet"
-          description="You haven't added any skills to your portfolio yet."
-          action={{
-            label: 'Add your first skill',
-            href: '/admin/skills/new',
-          }}
-        />
-      )}
+          <Button variant="outline" size="icon" onClick={handleSearch}>
+            <Search className="text-muted-foreground" />
+          </Button>
+        </ButtonGroup>
+
+        {/* Content */}
+        {hasSkills ? (
+          <>
+            {/* Table */}
+            <SkillTable
+              skills={skills}
+              onDelete={setDeleteSkill}
+              sort={sort}
+              onSort={handleSort}
+            />
+
+            {/* Delete Dialog */}
+            <DeleteDialog
+              open={Boolean(deleteSkill)}
+              title="Delete skill"
+              description="This skill will be permanently removed from your portfolio."
+              itemName={deleteSkill?.name}
+              onClose={() => setDeleteSkill(null)}
+              onConfirm={async () => {
+                if (!deleteSkill) return
+
+                try {
+                  await deleteMutation.mutateAsync(deleteSkill.id)
+                  setDeleteSkill(null)
+                } catch {
+                  // Error is handled by the mutation.
+                }
+              }}
+            />
+          </>
+        ) : (
+          <EmptyState
+            icon={Code2}
+            title="No skills yet"
+            description="You haven't added any skills to your portfolio yet."
+            action={{
+              label: 'Add skill',
+              href: '/admin/skills/new',
+            }}
+          />
+        )}
+      </div>
     </div>
   )
 }

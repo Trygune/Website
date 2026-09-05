@@ -162,100 +162,100 @@ const ProjectsAdminPage = () => {
           New project
         </Link>
       </div>
+      <div className="space-y-5">
+        {/* Stats */}
+        <StatsGrid stats={stats} />
 
-      {/* Content */}
-      {hasProjects ? (
-        <section className="space-y-5">
-          {/* Stats */}
-          <StatsGrid stats={stats} />
-
-          {/* Search */}
-          <div className="grid grid-cols-3 gap-4">
-            <ButtonGroup className="relative w-full">
-              <Input
-                type="search"
-                id="input-button-group"
-                value={searchInput}
-                onChange={(event) => setSearchInput(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    handleSearch()
-                  }
-                }}
-                placeholder="Type to search..."
-              />
-              <Button variant="outline" size="icon" onClick={handleSearch}>
-                <Search className="text-muted-foreground" />
-              </Button>
-            </ButtonGroup>
-            <div className="w-full">
-              <Combobox
-                items={skills}
-                multiple
-                value={value}
-                onValueChange={setValue}
-              >
-                <ComboboxChips>
-                  <ComboboxValue>
-                    {value.map((item, index) => (
-                      <ComboboxChip key={`ComboboxChip-${item}-${index}`}>
-                        {item}
-                      </ComboboxChip>
-                    ))}
-                  </ComboboxValue>
-                  <ComboboxChipsInput placeholder="Add technology" />
-                </ComboboxChips>
-                <ComboboxContent>
-                  <ComboboxEmpty>No items found.</ComboboxEmpty>
-                  <ComboboxList>
-                    {(item, index) => (
-                      <ComboboxItem
-                        key={`ComboboxItem-${item}-${index}`}
-                        value={item}
-                      >
-                        {item}
-                      </ComboboxItem>
-                    )}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
-            </div>
+        {/* Search */}
+        <div className="grid grid-cols-3 gap-4">
+          <ButtonGroup className="relative w-full">
+            <Input
+              type="search"
+              id="input-button-group"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  handleSearch()
+                }
+              }}
+              placeholder="Type to search..."
+            />
+            <Button variant="outline" size="icon" onClick={handleSearch}>
+              <Search className="text-muted-foreground" />
+            </Button>
+          </ButtonGroup>
+          <div className="w-full">
+            <Combobox
+              items={skills}
+              multiple
+              value={value}
+              onValueChange={setValue}
+            >
+              <ComboboxChips>
+                <ComboboxValue>
+                  {value.map((item, index) => (
+                    <ComboboxChip key={`ComboboxChip-${item}-${index}`}>
+                      {item}
+                    </ComboboxChip>
+                  ))}
+                </ComboboxValue>
+                <ComboboxChipsInput placeholder="Add technology" />
+              </ComboboxChips>
+              <ComboboxContent>
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item, index) => (
+                    <ComboboxItem
+                      key={`ComboboxItem-${item}-${index}`}
+                      value={item}
+                    >
+                      {item}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </div>
+        </div>
+        {/* Content */}
+        {hasProjects ? (
+          <>
+            {/* Projects */}
+            <ProjectTable
+              projects={projects}
+              onDelete={setDeleteProject}
+              sort={sort}
+              onSort={handleSort}
+            />
+            <Pagination pagination={pagination} baseUrl="/admin/projects" />
+            <DeleteDialog
+              open={Boolean(deleteProject)}
+              title="Delete project"
+              description="This project will be permanently removed from your portfolio."
+              itemName={deleteProject?.title}
+              onClose={() => setDeleteProject(null)}
+              onConfirm={async () => {
+                if (!deleteProject) return
 
-          {/* Projects */}
-          <ProjectTable
-            projects={projects}
-            onDelete={setDeleteProject}
-            sort={sort}
-            onSort={handleSort}
-          />
-          <Pagination pagination={pagination} baseUrl="/admin/projects" />
-          <DeleteDialog
-            open={Boolean(deleteProject)}
-            title="Delete project"
-            description="This project will be permanently removed from your portfolio."
-            itemName={deleteProject?.title}
-            onClose={() => setDeleteProject(null)}
-            onConfirm={async () => {
-              if (!deleteProject) return
+                await deleteMutation.mutateAsync(deleteProject.id)
 
-              await deleteMutation.mutateAsync(deleteProject.id)
-
-              setDeleteProject(null)
+                setDeleteProject(null)
+              }}
+            />
+          </>
+        ) : (
+          <EmptyState
+            icon={FolderKanban}
+            title="No projects yet"
+            description="You haven't added any projects to your portfolio yet."
+            action={{
+              label: 'Add project',
+              href: '/admin/projects/new',
             }}
           />
-        </section>
-      ) : (
-        <EmptyState
-          icon={FolderKanban}
-          title="No projects yet"
-          description="You haven't added any projects to your portfolio yet."
-          action={{
-            label: 'Add your first project',
-            href: '/admin/projects/new',
-          }}
-        />
-      )}
+        )}
+      </div>
     </div>
   )
 }

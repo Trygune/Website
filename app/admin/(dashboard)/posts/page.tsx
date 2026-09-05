@@ -132,65 +132,66 @@ const PostsAdminPage = () => {
           New post
         </Link>
       </div>
+      <div className="space-y-5">
+        {/* Stats */}
+        <StatsGrid stats={stats} />
 
-      {hasPosts ? (
-        <>
-          {/* Stats */}
-          <StatsGrid stats={stats} />
-
-          {/* Search */}
-          <ButtonGroup className="relative max-w-md w-full">
-            <Input
-              type="search"
-              id="input-button-group"
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  handleSearch()
-                }
-              }}
-              placeholder="Type to search..."
-            />
-            <Button variant="outline" size="icon" onClick={handleSearch}>
-              <Search className="text-muted-foreground" />
-            </Button>
-          </ButtonGroup>
-
-          {/* Posts table */}
-          <PostTable
-            posts={posts}
-            onDelete={setDeletePost}
-            sort={sort}
-            onSort={handleSort}
+        {/* Search */}
+        <ButtonGroup className="relative max-w-md w-full">
+          <Input
+            type="search"
+            id="input-button-group"
+            value={searchInput}
+            onChange={(event) => setSearchInput(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                handleSearch()
+              }
+            }}
+            placeholder="Type to search..."
           />
-          <Pagination pagination={pagination} baseUrl="/admin/posts" />
-          <DeleteDialog
-            open={Boolean(deletePost)}
-            title="Delete post"
-            description="This post will be permanently removed from your blog."
-            itemName={deletePost?.title}
-            onClose={() => setDeletePost(null)}
-            onConfirm={async () => {
-              if (!deletePost) return
+          <Button variant="outline" size="icon" onClick={handleSearch}>
+            <Search className="text-muted-foreground" />
+          </Button>
+        </ButtonGroup>
 
-              await deleteMutation.mutateAsync(deletePost.id)
+        {hasPosts ? (
+          <>
+            {/* Posts table */}
+            <PostTable
+              posts={posts}
+              onDelete={setDeletePost}
+              sort={sort}
+              onSort={handleSort}
+            />
+            <Pagination pagination={pagination} baseUrl="/admin/posts" />
+            <DeleteDialog
+              open={Boolean(deletePost)}
+              title="Delete post"
+              description="This post will be permanently removed from your blog."
+              itemName={deletePost?.title}
+              onClose={() => setDeletePost(null)}
+              onConfirm={async () => {
+                if (!deletePost) return
 
-              console.log('Delete post:', deletePost.id)
+                await deleteMutation.mutateAsync(deletePost.id)
+
+                console.log('Delete post:', deletePost.id)
+              }}
+            />
+          </>
+        ) : (
+          <EmptyState
+            icon={FileText}
+            title="No posts yet"
+            description="Start writing your first article for your blog."
+            action={{
+              label: 'Create post',
+              href: '/admin/posts/new',
             }}
           />
-        </>
-      ) : (
-        <EmptyState
-          icon={FileText}
-          title="No posts yet"
-          description="Start writing your first article for your blog."
-          action={{
-            label: 'Create your first post',
-            href: '/admin/posts/new',
-          }}
-        />
-      )}
+        )}
+      </div>
     </div>
   )
 }

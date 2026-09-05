@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowUpRight, FileText } from 'lucide-react'
 import { Post } from '@/types/post'
+import EmptyState from '../shared/EmptyState'
 
 type RecentPostsProps = {
   posts: Post[]
@@ -83,22 +84,16 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
           ))}
         </div>
       ) : (
-        <div className="px-5 py-10 text-center">
-          <FileText className="mx-auto size-5 text-muted-foreground" />
-
-          <p className="mt-3 text-sm font-medium">No posts yet</p>
-
-          <p className="mt-1 text-xs text-muted-foreground">
-            Create your first blog post.
-          </p>
-
-          <Link
-            href="/admin/posts/new"
-            className="mt-4 inline-flex text-xs font-medium underline underline-offset-4"
-          >
-            Create post
-          </Link>
-        </div>
+        <EmptyState
+          icon={FileText}
+          title="No posts yet"
+          description="Start writing your first article for your blog."
+          noBorder
+          action={{
+            label: 'Create post',
+            href: '/admin/posts/new',
+          }}
+        />
       )}
     </section>
   )

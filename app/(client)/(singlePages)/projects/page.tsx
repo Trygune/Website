@@ -1,9 +1,8 @@
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import ProjectGrid from '@/components/projects/ProjectGrid'
 import { getProjects } from '@/services/projects'
 import Pagination from '@/components/shared/Pagination'
 import { createMetadata } from '@/lib/seo/metadata'
+import AppBreadCrumb from '@/components/shared/AppBreadCrumb'
 
 type ProjectPageProps = {
   searchParams: Promise<{
@@ -28,15 +27,8 @@ const ProjectsPage = async ({ searchParams }: ProjectPageProps) => {
   })
 
   return (
-    <main className="py-16 sm:py-24">
-      {/* Back */}
-      <Link
-        href="/"
-        className="group mb-12 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-        Back home
-      </Link>
+    <>
+      <AppBreadCrumb current="Projects" />
 
       {/* Header */}
       <header className="max-w-3xl">
@@ -60,7 +52,7 @@ const ProjectsPage = async ({ searchParams }: ProjectPageProps) => {
       </section>
 
       <Pagination pagination={pagination} baseUrl="/projects" />
-    </main>
+    </>
   )
 }
 

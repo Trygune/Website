@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowUpRight, FolderKanban } from 'lucide-react'
 import { Project } from '@/types/project'
+import EmptyState from '../shared/EmptyState'
 
 type RecentProjectsProps = {
   projects: Project[]
@@ -96,22 +97,16 @@ const RecentProjects = ({ projects }: RecentProjectsProps) => {
           ))}
         </div>
       ) : (
-        <div className="px-5 py-10 text-center">
-          <FolderKanban className="mx-auto size-5 text-muted-foreground" />
-
-          <p className="mt-3 text-sm font-medium">No projects yet</p>
-
-          <p className="mt-1 text-xs text-muted-foreground">
-            Add your first project to your portfolio.
-          </p>
-
-          <Link
-            href="/admin/projects/new"
-            className="mt-4 inline-flex text-xs font-medium underline underline-offset-4"
-          >
-            Create project
-          </Link>
-        </div>
+        <EmptyState
+          icon={FolderKanban}
+          title="No projects yet"
+          description="You haven't added any projects to your portfolio yet."
+          noBorder
+          action={{
+            label: 'Add project',
+            href: '/admin/projects/new',
+          }}
+        />
       )}
     </section>
   )

@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { ArrowLeft, ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { getSkills } from '@/services/skills'
 import { createMetadata } from '@/lib/seo/metadata'
+import AppBreadCrumb from '@/components/shared/AppBreadCrumb'
 
 export const metadata = createMetadata({
   title: 'Skills',
@@ -16,15 +17,8 @@ const SkillsPage = async () => {
   const categories = [...new Set(skills.map((skill) => skill.category))]
 
   return (
-    <main className="py-16 sm:py-24">
-      {/* Back */}
-      <Link
-        href="/"
-        className="group mb-12 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-        Back home
-      </Link>
+    <>
+      <AppBreadCrumb current="Skills" />
 
       {/* Header */}
       <header className="max-w-3xl">
@@ -146,7 +140,7 @@ const SkillsPage = async () => {
           </Link>
         </div>
       </section>
-    </main>
+    </>
   )
 }
 

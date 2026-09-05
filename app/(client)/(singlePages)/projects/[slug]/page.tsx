@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import ProjectDetails from '@/components/projects/ProjectDetails'
 import { getProjectBySlug } from '@/services/projects'
 import { createMetadata } from '@/lib/seo/metadata'
+import AppBreadCrumb from '@/components/shared/AppBreadCrumb'
 
 type ProjectPageProps = {
   params: Promise<{
@@ -39,7 +40,7 @@ const ProjectPage = async ({ params }: ProjectPageProps) => {
 
   if (!project) {
     return (
-      <main className="py-24">
+      <div className="py-24">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
             404
@@ -61,14 +62,15 @@ const ProjectPage = async ({ params }: ProjectPageProps) => {
             Back to projects
           </Link>
         </div>
-      </main>
+      </div>
     )
   }
 
   return (
-    <main>
+    <>
+      <AppBreadCrumb before="Projects" current={slug} />
       <ProjectDetails project={project} />
-    </main>
+    </>
   )
 }
 

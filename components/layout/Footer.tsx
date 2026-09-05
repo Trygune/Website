@@ -7,8 +7,9 @@ const footerLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
   { href: '/projects', label: 'Projects' },
-  { href: '/experience', label: 'Experience' },
+  { href: '/experiences', label: 'Experiences' },
   { href: '/contact', label: 'Contact' },
+  { href: '/skills', label: 'Skills' },
 ]
 
 const Footer = () => {
@@ -60,7 +61,7 @@ const Footer = () => {
 
             <div className="flex items-center gap-2">
               <Link
-                href="https://github.com"
+                href="https://github.com/Trygune"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
@@ -70,7 +71,7 @@ const Footer = () => {
               </Link>
 
               <Link
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/farbod-daneshmandfard"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
