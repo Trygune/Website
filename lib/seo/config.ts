@@ -7,7 +7,7 @@ export const siteConfig = {
   description:
     'Front-End Developer focused on React, Next.js, and TypeScript, with experience building full-stack applications using Node.js, Express, and MongoDB.',
 
-  url: 'http://localhost:3000',
+  url: 'https://farboddaneshmandfard.vercel.app',
 
   author: 'Farbod Daneshmandfard',
 
