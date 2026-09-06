@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { BriefcaseBusiness, NotebookPen, Plus, Search } from 'lucide-react'
 import EmptyState from '@/components/admin/shared/EmptyState'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import ExperienceTable from '@/components/admin/experiences/ExperienceTable'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import { useDeleteExperience, useExperiences } from '@/hooks/useExperiences'
@@ -33,6 +33,21 @@ import { useSkills } from '@/hooks/useSkills'
 import AppPagination from '@/components/shared/AppPagination'
 
 const ExperienceAdminPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="space-y-4">
+          <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+          <div className="h-64 animate-pulse rounded-xl bg-muted" />
+        </div>
+      }
+    >
+      <ExperienceAdminContent />
+    </Suspense>
+  )
+}
+
+const ExperienceAdminContent = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1

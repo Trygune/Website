@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { FileText, Paperclip, Plus, Search, Upload } from 'lucide-react'
 import EmptyState from '@/components/admin/shared/EmptyState'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import PostTable from '@/components/admin/posts/PostTable'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import { useDeletePost, usePosts } from '@/hooks/usePosts'
@@ -17,6 +17,21 @@ import { Button } from '@/components/ui/button'
 import AppPagination from '@/components/shared/AppPagination'
 
 const PostsAdminPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="space-y-4">
+          <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+          <div className="h-64 animate-pulse rounded-xl bg-muted" />
+        </div>
+      }
+    >
+      <PostsAdminContent />
+    </Suspense>
+  )
+}
+
+const PostsAdminContent = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1

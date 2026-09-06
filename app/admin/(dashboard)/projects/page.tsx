@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { FolderKanban, Paperclip, Plus, Search, Upload } from 'lucide-react'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import EmptyState from '@/components/admin/shared/EmptyState'
 import ProjectTable from '@/components/admin/projects/ProjectTable'
@@ -29,6 +29,21 @@ import { useSkills } from '@/hooks/useSkills'
 import AppPagination from '@/components/shared/AppPagination'
 
 const ProjectsAdminPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="space-y-4">
+          <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+          <div className="h-64 animate-pulse rounded-xl bg-muted" />
+        </div>
+      }
+    >
+      <ProjectsAdminContent />
+    </Suspense>
+  )
+}
+
+const ProjectsAdminContent = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1

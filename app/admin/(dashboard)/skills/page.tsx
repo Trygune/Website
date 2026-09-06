@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Code2, Gem, Plus, Search } from 'lucide-react'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 
 import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 import EmptyState from '@/components/admin/shared/EmptyState'
@@ -18,6 +18,21 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 const SkillsAdminPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="space-y-4">
+          <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+          <div className="h-64 animate-pulse rounded-xl bg-muted" />
+        </div>
+      }
+    >
+      <SkillsAdminContent />
+    </Suspense>
+  )
+}
+
+const SkillsAdminContent = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const sortParam = searchParams.get('sort')
