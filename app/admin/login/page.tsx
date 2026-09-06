@@ -33,7 +33,7 @@ const AdminLoginPage = () => {
         )
 
         if (response.status === 200) {
-          router.replace('/admin')
+          router.push('/admin')
         }
       } catch (error) {
         console.error('Auth check failed:', error)
