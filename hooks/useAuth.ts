@@ -8,5 +8,6 @@ export const useMe = () => {
     queryKey: ME_QUERY_KEY,
     queryFn: getMe,
     retry: false,
+    refetchInterval: 30_000,
   })
 }

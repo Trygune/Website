@@ -5,7 +5,6 @@ import { ArrowLeft, LockKeyhole } from 'lucide-react'
 import { login } from '@/services/auth'
 import { SubmitEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useMe } from '@/hooks/useAuth'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -13,24 +12,38 @@ import { Button } from '@/components/ui/button'
 
 const AdminLoginPage = () => {
   const router = useRouter()
-  const { data, isPending, isError } = useMe()
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (isError) return
+    let isChecking = false
 
-    if (data && data.success && data.user) {
-      return router.replace('/admin')
+    const checkAuth = async () => {
+      if (isChecking) return
+
+      isChecking = true
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/me`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+          }
+        )
+
+        if (response.status === 200) {
+          router.replace('/admin')
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error)
+      } finally {
+        isChecking = false
+      }
     }
-  }, [isPending, isError, data, router])
 
-  if (isPending) {
-    return <div>Loading...</div>
-  }
-
-  if (!isError && data && data.success && data.user) {
-    return <div>Redirecting...</div>
-  }
+    checkAuth()
+  }, [])
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
