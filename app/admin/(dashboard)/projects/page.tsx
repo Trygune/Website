@@ -43,7 +43,6 @@ const ProjectsAdminPage = () => {
     sort,
     search,
     technologies,
-    limit: 1,
   })
   const {
     data: statData,

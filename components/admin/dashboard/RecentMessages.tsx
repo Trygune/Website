@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import { ArrowUpRight, FileText } from 'lucide-react'
-import { Post } from '@/types/post'
+import { ArrowUpRight, FileText, MessageCircle } from 'lucide-react'
 import EmptyState from '../shared/EmptyState'
+import { ContactMessage } from '@/types/contact'
 
-type RecentPostsProps = {
-  posts: Post[]
+type RecentMessagesProps = {
+  messages: ContactMessage[]
 }
 
 const formatDate = (date: string) => {
@@ -17,13 +17,13 @@ const formatDate = (date: string) => {
   }).format(new Date(date))
 }
 
-const RecentPosts = ({ posts }: RecentPostsProps) => {
+const RecentMessages = ({ messages }: RecentMessagesProps) => {
   return (
     <section className="rounded-xl border bg-background">
       {/* Header */}
       <div className="flex items-center justify-between border-b px-5 py-4">
         <div>
-          <h3 className="font-semibold">Recent posts</h3>
+          <h3 className="font-semibold">Recent messages</h3>
 
           <p className="mt-1 text-xs text-muted-foreground">
             Your latest blog posts.
@@ -31,7 +31,7 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
         </div>
 
         <Link
-          href="/admin/posts"
+          href="/admin/contact"
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           View all
@@ -40,43 +40,39 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
       </div>
 
       {/* Posts */}
-      {posts.length > 0 ? (
+      {messages.length > 0 ? (
         <div className="divide-y">
-          {posts.map((post) => (
+          {messages.map((message) => (
             <Link
-              key={post.id}
-              href={`/admin/posts/${post.id}`}
+              key={message.id}
+              href="/admin/contact"
               className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-muted/30"
             >
               {/* Icon */}
               <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-muted/20">
-                <FileText className="size-4 text-muted-foreground" />
+                <MessageCircle className="size-4 text-muted-foreground" />
               </div>
 
               {/* Content */}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="truncate text-sm font-medium">{post.title}</h3>
-
-                  <span
-                    className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium sm:inline-flex ${
-                      post.publishedAt
-                        ? 'bg-foreground/10 text-foreground'
-                        : 'bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    {post.publishedAt ? 'Published' : 'Draft'}
+                  <h3 className="truncate text-sm font-medium">
+                    {message.name}
+                  </h3>
+                  <span>·</span>
+                  <span className="hidden shrink-0 text-[11px] font-medium sm:inline-flex">
+                    {message.email.slice(0, 12)}...
                   </span>
                 </div>
 
                 <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>{post.category}</span>
-
-                  <span>·</span>
-
-                  <span>{formatDate(post.updatedAt)}</span>
+                  <span>{message.subject.slice(0, 28)}...</span>
                 </div>
               </div>
+
+              <span className="hidden shrink-0 text-[11px] font-medium sm:inline-flex">
+                {formatDate(message.createdAt)}
+              </span>
 
               {/* Arrow */}
               <ArrowUpRight className="size-4 shrink-0 text-muted-foreground" />
@@ -99,4 +95,4 @@ const RecentPosts = ({ posts }: RecentPostsProps) => {
   )
 }
 
-export default RecentPosts
+export default RecentMessages

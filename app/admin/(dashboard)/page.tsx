@@ -5,6 +5,7 @@ import DashboardStats from '@/components/admin/dashboard/DashboardStats'
 import RecentPosts from '@/components/admin/dashboard/RecentPosts'
 import RecentProjects from '@/components/admin/dashboard/RecentProjects'
 import { useDashboard } from '@/hooks/useDashboard'
+import RecentMessages from '@/components/admin/dashboard/RecentMessages'
 
 const AdminDashboardPage = () => {
   const { data, isPending, isError } = useDashboard()
@@ -28,7 +29,12 @@ const AdminDashboardPage = () => {
       total: 0,
       featured: 0,
     },
+    messages: {
+      total: 0,
+      unread: 0,
+    },
     recentProjects: [],
+    recentMessages: [],
     recentPosts: [],
   }
 
@@ -84,12 +90,16 @@ const AdminDashboardPage = () => {
         posts={stats.posts}
         experience={stats.experience}
         skills={stats.skills}
+        messages={stats.messages}
       />
 
       {/* Recent content */}
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid gap-6 xl:grid-cols-3">
         {/* Projects */}
         <RecentProjects projects={stats.recentProjects} />
+
+        {/* Projects */}
+        <RecentMessages messages={stats.recentMessages} />
 
         {/* Posts */}
         <RecentPosts posts={stats.recentPosts} />

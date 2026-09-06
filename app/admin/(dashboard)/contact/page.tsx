@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Check,
   Mail,
@@ -25,68 +25,15 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 
-type ContactMessage = {
-  id: string
-  name: string
-  email: string
-  subject: string
-  message: string
-  createdAt: string
-  read: boolean
-}
+import {
+  useContactMessages,
+  useDeleteContactMessage,
+  useUpdateContactMessage,
+} from '@/hooks/useContact'
 
-const mockMessages: ContactMessage[] = [
-  {
-    id: '1',
-    name: 'Ali Ahmadi',
-    email: 'ali@example.com',
-    subject: 'Frontend Development Opportunity',
-    message:
-      'Hi Farbod, I came across your portfolio and really liked your work with React and Next.js. We are looking for a frontend developer to join our team. I would love to discuss the opportunity with you.',
-    createdAt: '2026-09-06T10:30:00',
-    read: false,
-  },
-  {
-    id: '2',
-    name: 'Sara Mohammadi',
-    email: 'sara@example.com',
-    subject: 'Project Collaboration',
-    message:
-      'Hello, I am working on a new web application and I am interested in collaborating with you on the frontend part of the project.',
-    createdAt: '2026-09-05T18:45:00',
-    read: false,
-  },
-  {
-    id: '3',
-    name: 'Reza Karimi',
-    email: 'reza@example.com',
-    subject: 'Question about your project',
-    message:
-      'I really liked the architecture of your portfolio project. Could you tell me more about how you implemented the authentication system?',
-    createdAt: '2026-09-04T14:20:00',
-    read: true,
-  },
-  {
-    id: '4',
-    name: 'Nima Hosseini',
-    email: 'nima@example.com',
-    subject: 'Freelance Project',
-    message:
-      'We have a freelance project involving Next.js and TypeScript and would like to know if you are available for new projects.',
-    createdAt: '2026-09-03T11:10:00',
-    read: true,
-  },
-  {
-    id: '5',
-    name: 'Mina Rahimi',
-    email: 'mina@example.com',
-    subject: 'Portfolio Feedback',
-    message:
-      'Your portfolio looks great. I especially liked the projects section and the clean UI. Just wanted to share some feedback.',
-    createdAt: '2026-09-01T09:15:00',
-    read: true,
-  },
-]
+import type { ContactMessage } from '@/types/contact'
+
+import DeleteDialog from '@/components/admin/shared/DeleteDialog'
 
 const formatDate = (date: string) => {
   return new Intl.DateTimeFormat('en-US', {
@@ -107,59 +54,106 @@ const getInitials = (name: string) => {
 }
 
 const ContactMessagesPage = () => {
-  const [messages, setMessages] = useState<ContactMessage[]>(mockMessages)
+  const { data, isPending, isError } = useContactMessages()
+
+  const deleteMutation = useDeleteContactMessage()
+  const updateMutation = useUpdateContactMessage()
+
+  const messages = data?.data ?? []
 
   const [selectedId, setSelectedId] = useState<string | null>(
-    mockMessages[0]?.id ?? null
+    messages.length > 0 ? messages[0].id : null
   )
-
+  const [deleteMessage, setDeleteMessage] = useState<ContactMessage | null>(
+    null
+  )
   const [search, setSearch] = useState('')
 
   const selectedMessage = messages.find((message) => message.id === selectedId)
 
-  const filteredMessages = useMemo(() => {
+  const filteredMessages = messages.filter((message) => {
     const query = search.toLowerCase().trim()
 
-    if (!query) return messages
+    if (!query) {
+      return true
+    }
 
-    return messages.filter(
-      (message) =>
-        message.name.toLowerCase().includes(query) ||
-        message.email.toLowerCase().includes(query) ||
-        message.subject.toLowerCase().includes(query) ||
-        message.message.toLowerCase().includes(query)
+    return (
+      message.name.toLowerCase().includes(query) ||
+      message.email.toLowerCase().includes(query) ||
+      message.subject.toLowerCase().includes(query) ||
+      message.message.toLowerCase().includes(query)
     )
-  }, [messages, search])
+  })
 
-  const unreadCount = messages.filter((message) => !message.read).length
+  const unreadCount = messages.filter((message) => !message.isRead).length
 
-  const handleSelectMessage = (message: ContactMessage) => {
+  const handleSelectMessage = async (message: ContactMessage) => {
     setSelectedId(message.id)
 
-    // TODO: Connect to API later
-    setMessages((current) =>
-      current.map((item) =>
-        item.id === message.id ? { ...item, read: true } : item
-      )
-    )
+    if (message.isRead) {
+      return
+    }
+
+    try {
+      await updateMutation.mutateAsync({
+        id: message.id,
+        data: {
+          isRead: true,
+        },
+      })
+    } catch {
+      // Error handling can be connected to your toast system.
+    }
   }
 
-  const toggleReadStatus = (id: string) => {
-    // TODO: Connect to API later
-    setMessages((current) =>
-      current.map((message) =>
-        message.id === id ? { ...message, read: !message.read } : message
-      )
-    )
+  const toggleReadStatus = async (message: ContactMessage) => {
+    try {
+      await updateMutation.mutateAsync({
+        id: message.id,
+        data: {
+          isRead: !message.isRead,
+        },
+      })
+    } catch {
+      // Error handling can be connected to your toast system.
+    }
   }
 
-  const deleteMessage = (id: string) => {
-    // TODO: Connect to API later
-    setMessages((current) => current.filter((message) => message.id !== id))
+  const handleDelete = async () => {
+    if (!deleteMessage) {
+      return
+    }
 
-    if (selectedId === id) {
+    await deleteMutation.mutateAsync(deleteMessage.id)
+
+    if (selectedId === deleteMessage.id) {
       setSelectedId(null)
     }
+
+    setDeleteMessage(null)
+  }
+
+  if (isError) {
+    return (
+      <div className="rounded-xl border p-6">
+        <h2 className="font-semibold">Failed to load messages</h2>
+
+        <p className="mt-1 text-sm text-muted-foreground">
+          Please try again later.
+        </p>
+      </div>
+    )
+  }
+
+  if (isPending) {
+    return (
+      <div className="space-y-4">
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+
+        <div className="h-64 animate-pulse rounded-xl bg-muted" />
+      </div>
+    )
   }
 
   return (
@@ -230,7 +224,9 @@ const ContactMessagesPage = () => {
                             <div className="flex items-start justify-between gap-2">
                               <p
                                 className={`truncate text-sm ${
-                                  message.read ? 'font-medium' : 'font-semibold'
+                                  message.isRead
+                                    ? 'font-medium'
+                                    : 'font-semibold'
                                 }`}
                               >
                                 {message.name}
@@ -243,7 +239,7 @@ const ContactMessagesPage = () => {
 
                             <p
                               className={`mt-1 truncate text-sm ${
-                                message.read
+                                message.isRead
                                   ? 'text-muted-foreground'
                                   : 'font-medium'
                               }`}
@@ -255,7 +251,7 @@ const ContactMessagesPage = () => {
                               {message.message}
                             </p>
 
-                            {!message.read && (
+                            {!message.isRead && (
                               <Badge
                                 variant="default"
                                 className="mt-2 h-5 px-1.5 text-[10px]"
@@ -277,7 +273,9 @@ const ContactMessagesPage = () => {
                     <p className="text-sm font-medium">No messages found</p>
 
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Try another search term.
+                      {search
+                        ? 'Try another search term.'
+                        : 'Your inbox is empty.'}
                     </p>
                   </div>
                 )}
@@ -322,6 +320,7 @@ const ContactMessagesPage = () => {
                           className="shrink-0"
                         >
                           <MoreHorizontal className="size-4" />
+
                           <span className="sr-only">Message actions</span>
                         </Button>
                       }
@@ -329,9 +328,9 @@ const ContactMessagesPage = () => {
 
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
-                        onClick={() => toggleReadStatus(selectedMessage.id)}
+                        onClick={() => toggleReadStatus(selectedMessage)}
                       >
-                        {selectedMessage.read ? (
+                        {selectedMessage.isRead ? (
                           <>
                             <Mail className="mr-2 size-4" />
                             Mark as unread
@@ -346,7 +345,7 @@ const ContactMessagesPage = () => {
 
                       <DropdownMenuItem
                         variant="destructive"
-                        onClick={() => deleteMessage(selectedMessage.id)}
+                        onClick={() => setDeleteMessage(selectedMessage)}
                       >
                         <Trash2 className="mr-2 size-4" />
                         Delete
@@ -361,6 +360,7 @@ const ContactMessagesPage = () => {
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4 text-xs text-muted-foreground sm:px-6">
                   <div className="flex items-center gap-2">
                     <User className="size-3.5" />
+
                     <span>{selectedMessage.name}</span>
                   </div>
 
@@ -368,7 +368,7 @@ const ContactMessagesPage = () => {
 
                   <span>{formatDate(selectedMessage.createdAt)}</span>
 
-                  {selectedMessage.read && (
+                  {selectedMessage.isRead && (
                     <Badge variant="outline" className="gap-1 text-[10px]">
                       <Check className="size-3" />
                       Read
@@ -390,9 +390,10 @@ const ContactMessagesPage = () => {
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <Button
                       variant="outline"
-                      onClick={() => toggleReadStatus(selectedMessage.id)}
+                      onClick={() => toggleReadStatus(selectedMessage)}
+                      disabled={updateMutation.isPending}
                     >
-                      {selectedMessage.read ? (
+                      {selectedMessage.isRead ? (
                         <>
                           <Mail className="mr-2 size-4" />
                           Mark as unread
@@ -408,7 +409,8 @@ const ContactMessagesPage = () => {
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => deleteMessage(selectedMessage.id)}
+                      onClick={() => setDeleteMessage(selectedMessage)}
+                      disabled={deleteMutation.isPending}
                     >
                       <Trash2 className="mr-2 size-4" />
                       Delete
@@ -432,6 +434,16 @@ const ContactMessagesPage = () => {
           </div>
         </div>
       </Card>
+
+      {/* Delete dialog */}
+      <DeleteDialog
+        open={Boolean(deleteMessage)}
+        title="Delete message"
+        description="This message will be permanently removed from your inbox."
+        itemName={deleteMessage?.name}
+        onClose={() => setDeleteMessage(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

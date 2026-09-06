@@ -23,7 +23,7 @@ const RecentProjects = ({ projects }: RecentProjectsProps) => {
       {/* Header */}
       <div className="flex items-center justify-between border-b px-5 py-4">
         <div>
-          <h2 className="font-semibold">Recent projects</h2>
+          <h3 className="font-semibold">Recent projects</h3>
 
           <p className="mt-1 text-xs text-muted-foreground">
             Your latest portfolio projects.

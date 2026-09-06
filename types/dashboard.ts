@@ -1,3 +1,4 @@
+import { ContactMessage } from './contact'
 import { Post } from './post'
 import { Project } from './project'
 
@@ -26,7 +27,12 @@ export type DashboardResponse = {
       total: number
       featured: number
     }
+    messages: {
+      total: number
+      unread: number
+    }
     recentProjects: Project[]
+    recentMessages: ContactMessage[]
     recentPosts: Post[]
   }
 }

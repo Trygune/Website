@@ -20,7 +20,6 @@ const PostForm = ({ initialData, isEditing = false }: PostFormProps) => {
 
   const createMutation = useCreatePost()
   const updateMutation = useUpdatePost()
-
   const isPending = createMutation.isPending || updateMutation.isPending
 
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {

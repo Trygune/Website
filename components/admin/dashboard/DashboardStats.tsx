@@ -6,6 +6,7 @@ import {
   Code2,
   FileText,
   FolderKanban,
+  MessageCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -30,6 +31,10 @@ type DashboardStatsData = {
     total: number
     featured: number
   }
+  messages: {
+    total: number
+    unread: number
+  }
 }
 
 const DashboardStats = ({
@@ -37,9 +42,10 @@ const DashboardStats = ({
   posts,
   experience,
   skills,
+  messages,
 }: DashboardStatsData) => {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
       {/* Projects */}
       <Link
         href="/admin/projects"
@@ -133,6 +139,30 @@ const DashboardStats = ({
 
         <p className="mt-3 text-xs text-muted-foreground">
           {skills.featured} featured
+        </p>
+      </Link>
+
+      {/* Messages */}
+      <Link
+        href="/admin/contact"
+        className="group rounded-xl border bg-background p-5 transition-colors hover:bg-muted/30 sm:col-span-2 xl:col-span-1"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex size-10 items-center justify-center rounded-lg border">
+            <MessageCircle className="size-4 text-muted-foreground" />
+          </div>
+
+          <ArrowUpRight className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+        </div>
+
+        <p className="mt-5 text-sm text-muted-foreground">Messages</p>
+
+        <p className="mt-1 text-3xl font-bold tracking-tight">
+          {messages.total}
+        </p>
+
+        <p className="mt-3 text-xs text-muted-foreground">
+          {messages.unread} unread
         </p>
       </Link>
     </div>
