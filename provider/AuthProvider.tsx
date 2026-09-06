@@ -9,7 +9,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter()
   const pathname = usePathname()
   const { error } = useMe()
-
+  console.log('AuthProvider mounted')
   useEffect(() => {
     if (error instanceof ApiError && error.status === 401) {
       router.replace('/admin/login')
