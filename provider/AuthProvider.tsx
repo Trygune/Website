@@ -1,14 +1,19 @@
 'use client'
 
-import { useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, type ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useMe } from '@/hooks/useAuth'
 import { ApiError } from '@/services/api'
+import { User } from '@/types/auth'
+
+type UserContextType = User | null
+
+export const UserContext = createContext<UserContextType>(null)
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter()
   const pathname = usePathname()
-  const { error } = useMe()
+  const { data, error } = useMe()
 
   useEffect(() => {
     if (error instanceof ApiError && error.status === 401) {
@@ -16,7 +21,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [error, router, pathname])
 
-  return children
+  return (
+    <UserContext.Provider value={data?.user ?? null}>
+      {children}
+    </UserContext.Provider>
+  )
 }
 
 export default AuthProvider
+
+export const useUser = () => {
+  return useContext(UserContext)
+}
