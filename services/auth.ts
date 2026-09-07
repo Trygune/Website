@@ -41,7 +41,6 @@ export const resetPassword = ({
 }
 
 export const getMe = (): Promise<Omit<AuthResponse, 'message'>> => {
-  console.log('getMe called')
   return api<Omit<AuthResponse, 'message'>>('/auth/me')
 }
 

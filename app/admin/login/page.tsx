@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowLeft, LockKeyhole } from 'lucide-react'
-import { login } from '@/services/auth'
+import { getMe, login } from '@/services/auth'
 import { SubmitEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -23,16 +23,9 @@ const AdminLoginPage = () => {
       isChecking = true
 
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/me`,
-          {
-            method: 'GET',
-            credentials: 'include',
-            cache: 'no-store',
-          }
-        )
+        const response = await getMe()
 
-        if (response.status === 200) {
+        if (response.success) {
           router.replace('/admin')
         }
       } catch (error) {
