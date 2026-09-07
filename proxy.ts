@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server'
 const proxy = (request: NextRequest) => {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('access_token')?.value
+  console.log('token', token)
 
   if (
     pathname.startsWith('/admin') &&

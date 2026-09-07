@@ -33,9 +33,7 @@ const AdminLoginPage = () => {
         )
 
         if (response.status === 200) {
-          console.log('BEFORE REDIRECT')
           router.replace('/admin')
-          console.log('AFTER REDIRECT')
         }
       } catch (error) {
         console.error('Auth check failed:', error)
