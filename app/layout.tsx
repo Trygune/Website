@@ -6,6 +6,7 @@ import ReactQueryProvider from '@/provider/ReactQueryProvider'
 import { siteConfig } from '@/lib/seo/config'
 import JsonLd from '@/lib/seo/JsonLd'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import AnalyticsProvider from '@/provider/AnalyticsProvider'
 
 const publicSansHeading = Public_Sans({
   subsets: ['latin'],
@@ -85,6 +86,7 @@ const RootLayout = ({ children }: LayoutProps<'/'>) => {
     >
       <body className="min-h-screen">
         <JsonLd />
+        <AnalyticsProvider />
         <ReactQueryProvider>
           <TooltipProvider>{children}</TooltipProvider>
         </ReactQueryProvider>

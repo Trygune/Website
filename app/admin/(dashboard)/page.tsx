@@ -6,6 +6,7 @@ import RecentPosts from '@/components/admin/dashboard/RecentPosts'
 import RecentProjects from '@/components/admin/dashboard/RecentProjects'
 import { useDashboard } from '@/hooks/useDashboard'
 import RecentMessages from '@/components/admin/dashboard/RecentMessages'
+import AreaChartStat from '@/components/admin/dashboard/AreaChartStat'
 
 const AdminDashboardPage = () => {
   const { data, isPending, isError } = useDashboard()
@@ -92,6 +93,8 @@ const AdminDashboardPage = () => {
         skills={stats.skills}
         messages={stats.messages}
       />
+
+      <AreaChartStat />
 
       {/* Recent content */}
       <div className="grid gap-6 xl:grid-cols-3">
