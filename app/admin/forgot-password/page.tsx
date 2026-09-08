@@ -1,14 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowLeft, KeyRound, MailCheck } from 'lucide-react'
 import { SubmitEvent, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { forgotPassword } from '@/services/auth'
+import { Field, FieldDescription, FieldGroup } from '@/components/ui/field'
+import { LockKeyhole, MailCheck } from 'lucide-react'
 
 const ForgotPasswordPage = () => {
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -34,94 +34,80 @@ const ForgotPasswordPage = () => {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md">
-        {/* Back to login */}
+    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <div className="flex flex-col gap-6">
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <FieldGroup>
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="flex flex-col items-center gap-2 font-medium">
+                  <div className="flex size-8 items-center justify-center rounded-md">
+                    <LockKeyhole className="size-6" />
+                  </div>
+                </div>
+                <h1 className="text-xl font-bold">Forgot password?</h1>
+                <FieldDescription className="text-center px-4">
+                  Enter your email address and we&apos;ll send you a link to
+                  reset your password.
+                </FieldDescription>
+              </div>
+              {isSubmitted ? (
+                <div className="space-y-5">
+                  <div className="rounded-lg border bg-muted/40 p-4">
+                    <div className="flex gap-3">
+                      <MailCheck className="mt-0.5 size-5 shrink-0" />
 
-        <Link
-          href="/admin/login"
-          className="group mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-          Back to login
-        </Link>
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium">Check your email</p>
 
-        <Card className="border shadow-sm">
-          <CardHeader className="space-y-5">
-            <div className="flex size-11 items-center justify-center rounded-xl border bg-background">
-              <KeyRound className="size-5" />
-            </div>
-
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tight">
-                Forgot password?
-              </h1>
-
-              <p className="text-sm leading-6 text-muted-foreground">
-                Enter your email address and we&apos;ll send you a link to reset
-                your password.
-              </p>
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            {isSubmitted ? (
-              <div className="space-y-5">
-                <div className="rounded-lg border bg-muted/40 p-4">
-                  <div className="flex gap-3">
-                    <MailCheck className="mt-0.5 size-5 shrink-0" />
-
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Check your email</p>
-
-                      <p className="text-sm leading-6 text-muted-foreground">
-                        If an account with that email exists, you&apos;ll
-                        receive a password reset link shortly.
-                      </p>
+                        <p className="text-sm leading-6 text-muted-foreground">
+                          If an account with that email exists, you&apos;ll
+                          receive a password reset link shortly.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
+              ) : (
+                <>
+                  <Field>
+                    <Label htmlFor="email">Email</Label>
 
-                <Link
-                  href="/admin/login"
-                  className="bg-gray-100 flex h-12 w-full justify-center items-center hover:bg-gray-200 rounded-full font-medium transition-colors"
-                >
-                  Back to login
-                </Link>
-              </div>
-            ) : (
-              <form className="space-y-5" onSubmit={handleSubmit}>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="you@example.com"
-                    required
-                    className="h-12"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="h-12 w-full"
-                >
-                  {isLoading ? 'Sending...' : 'Send reset link'}
-                </Button>
-              </form>
-            )}
-          </CardContent>
-        </Card>
-
-        <p className="mt-8 text-center text-xs text-muted-foreground">
-          This area is restricted to the site administrator.
-        </p>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="you@example.com"
+                      required
+                    />
+                  </Field>
+                  <Field>
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading ? 'Sending...' : 'Send reset link'}
+                    </Button>
+                  </Field>
+                </>
+              )}
+            </FieldGroup>
+          </form>
+          <FieldDescription className="flex flex-col items-center text-center space-y-2">
+            <Link
+              href="/admin/forgot-password"
+              className="transition-colors hover:text-foreground no-underline!"
+            >
+              Forgot your password?
+            </Link>
+            <Link
+              href="/admin/login"
+              className="transition-colors hover:text-foreground no-underline!"
+            >
+              Back to login
+            </Link>
+          </FieldDescription>
+        </div>
       </div>
-    </main>
+    </div>
   )
 }
 

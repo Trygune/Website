@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { resetPassword } from '@/services/auth'
+import { Field, FieldDescription, FieldGroup } from '@/components/ui/field'
 
 type ResetPasswordPageProps = {
   params: Promise<{
@@ -48,138 +49,110 @@ const ResetPasswordPage = ({ params }: ResetPasswordPageProps) => {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md">
-        <Link
-          href="/admin/login"
-          className="group mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-          Back to login
-        </Link>
-
-        <Card className="border shadow-sm">
-          <CardHeader className="space-y-5">
-            <div className="flex size-11 items-center justify-center rounded-xl border bg-background">
-              <KeyRound className="size-5" />
-            </div>
-
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tight">
-                Reset password
-              </h1>
-
-              <p className="text-sm leading-6 text-muted-foreground">
-                Create a new password for your administrator account.
-              </p>
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            {isSubmitted ? (
-              <div className="space-y-5">
-                <div className="rounded-lg border bg-muted/40 p-4">
-                  <p className="text-sm font-medium">
-                    Password updated successfully.
-                  </p>
-
-                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                    You can now sign in with your new password.
-                  </p>
+    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <div className="flex flex-col gap-6">
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <FieldGroup>
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="flex flex-col items-center gap-2 font-medium">
+                  <div className="flex size-8 items-center justify-center rounded-md">
+                    <KeyRound className="size-6" />
+                  </div>
                 </div>
-
-                <Link
-                  href="/admin/login"
-                  className="bg-black text-white flex h-12 w-full justify-center items-center hover:text-white/90 rounded-full font-medium transition-colors"
-                >
-                  Go to login
-                </Link>
+                <h1 className="text-xl font-bold">Reset password</h1>
+                <FieldDescription className="text-center px-4">
+                  Create a new password for your administrator account.
+                </FieldDescription>
               </div>
-            ) : (
-              <form className="space-y-5" onSubmit={handleSubmit}>
-                <div className="space-y-2">
-                  <Label htmlFor="password">New password</Label>
-
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    placeholder="••••••••"
-                    required
-                    minLength={8}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="h-12"
-                  />
-
-                  <p className="text-xs text-muted-foreground">
-                    Use at least 8 characters.
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm password</Label>
-
-                  <Input
-                    id="confirm-password"
-                    name="confirm-password"
-                    type="password"
-                    autoComplete="new-password"
-                    placeholder="••••••••"
-                    required
-                    minLength={8}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="h-12"
-                  />
-
-                  {confirmPassword && password !== confirmPassword && (
-                    <p className="text-xs text-destructive">
-                      Passwords do not match.
+              {isSubmitted ? (
+                <div className="space-y-5">
+                  <div className="rounded-lg border bg-muted/40 p-4">
+                    <p className="text-sm font-medium">
+                      Password updated successfully.
                     </p>
-                  )}
+
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                      You can now sign in with your new password.
+                    </p>
+                  </div>
                 </div>
+              ) : (
+                <>
+                  <Field>
+                    <Label htmlFor="password">New password</Label>
 
-                <Button
-                  type="submit"
-                  disabled={
-                    isLoading ||
-                    !password ||
-                    !confirmPassword ||
-                    password !== confirmPassword
-                  }
-                  className="h-12 w-full"
-                >
-                  {isLoading ? 'Updating...' : 'Reset password'}
-                </Button>
-              </form>
-            )}
-          </CardContent>
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <Link
-              href="/admin/login"
-              className="transition-colors hover:text-foreground"
-            >
-              Login
-            </Link>
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      required
+                      minLength={8}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
 
-            <span aria-hidden="true">·</span>
+                    <p className="text-xs text-muted-foreground">
+                      Use at least 8 characters.
+                    </p>
+                  </Field>
+                  <Field>
+                    <Label htmlFor="confirm-password">Confirm password</Label>
 
+                    <Input
+                      id="confirm-password"
+                      name="confirm-password"
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      required
+                      minLength={8}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+
+                    {confirmPassword && password !== confirmPassword && (
+                      <p className="text-xs text-destructive">
+                        Passwords do not match.
+                      </p>
+                    )}
+                  </Field>
+                  <Field>
+                    <Button
+                      type="submit"
+                      disabled={
+                        isLoading ||
+                        !password ||
+                        !confirmPassword ||
+                        password !== confirmPassword
+                      }
+                    >
+                      {isLoading ? 'Updating...' : 'Reset password'}
+                    </Button>
+                  </Field>
+                </>
+              )}
+            </FieldGroup>
+          </form>
+          <FieldDescription className="flex flex-col items-center text-center space-y-2">
             <Link
               href="/admin/forgot-password"
-              className="transition-colors hover:text-foreground"
+              className="transition-colors hover:text-foreground no-underline!"
             >
-              Forgot password
+              Forgot your password?
             </Link>
-          </div>
-        </Card>
-
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          This area is restricted to the site administrator.
-        </p>
+            <Link
+              href="/admin/login"
+              className="transition-colors hover:text-foreground no-underline!"
+            >
+              Back to login
+            </Link>
+          </FieldDescription>
+        </div>
       </div>
-    </main>
+    </div>
   )
 }
 
