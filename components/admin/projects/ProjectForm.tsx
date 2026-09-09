@@ -20,6 +20,7 @@ const ProjectForm = ({ initialData, isEditing = false }: ProjectFormProps) => {
   )
 
   const [featured, setFeatured] = useState(initialData?.featured ?? false)
+  const [coverImage, setCoverImage] = useState(initialData?.coverImage ?? '')
 
   const createMutation = useCreateProject()
   const updateMutation = useUpdateProject()
@@ -33,6 +34,7 @@ const ProjectForm = ({ initialData, isEditing = false }: ProjectFormProps) => {
 
     formData.set('status', status)
     formData.set('featured', String(!!featured))
+    formData.set('coverImage', coverImage)
 
     try {
       if (isEditing && initialData) {
@@ -58,6 +60,7 @@ const ProjectForm = ({ initialData, isEditing = false }: ProjectFormProps) => {
         featured={featured}
         onStatusChange={setStatus}
         onFeaturedChange={setFeatured}
+        onImageChange={setCoverImage}
       />
 
       {/* Actions */}

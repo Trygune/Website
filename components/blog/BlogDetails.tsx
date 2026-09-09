@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Post } from '@/types/post'
 import { ArrowLeft, CalendarDays, Clock3 } from 'lucide-react'
 import { Badge } from '../ui/badge'
+import Image from 'next/image'
 
 type BlogDetailsProps = {
   post: Post
@@ -29,6 +30,17 @@ const BlogDetails = ({ post }: BlogDetailsProps) => {
             <Clock3 className="size-3.5" />
             {post.readTime ?? 'Unknown'}
           </span>
+        </div>
+
+        <div className="relative mt-8 aspect-video overflow-hidden rounded-2xl border bg-muted">
+          <Image
+            src={`${process.env.NEXT_PUBLIC_API_URL}${post.coverImage ?? '/uploads/images/sample.jpg'}`}
+            alt={`${post.title} preview`}
+            fill
+            priority
+            sizes="(min-width: 1280px) 1280px, 100vw"
+            className="object-cover"
+          />
         </div>
 
         <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">

@@ -30,6 +30,7 @@ type ProjectFormFieldsProps = {
   featured: boolean
   onStatusChange: (status: Project['status']) => void
   onFeaturedChange: (featured: boolean) => void
+  onImageChange: (url: string) => void
 }
 
 const inputClassName = 'h-11 rounded-lg bg-background'
@@ -40,6 +41,7 @@ const ProjectFormFields = ({
   featured,
   onStatusChange,
   onFeaturedChange,
+  onImageChange,
 }: ProjectFormFieldsProps) => {
   const [features, setFeatures] = useState<string[]>(
     initialData?.features ?? ['']
@@ -480,7 +482,9 @@ const ProjectFormFields = ({
           <ImageUpload
             value={initialData?.coverImage}
             label="Project cover"
+            onChange={onImageChange}
             description="Use a high-quality image that represents the project."
+            folder="projects"
           />
         </div>
       </section>

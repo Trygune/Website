@@ -1,3 +1,4 @@
+import { buildQuery } from '@/lib/build-query'
 import { api } from './api'
 
 type UploadImageResponse = {
@@ -8,13 +9,32 @@ type UploadImageResponse = {
   }
 }
 
-export const uploadImage = (file: File): Promise<UploadImageResponse> => {
+type ImageQuery = {
+  for?: 'projects' | 'posts' | 'avatars'
+}
+
+export const uploadImage = (
+  file: File,
+  query?: ImageQuery
+): Promise<UploadImageResponse> => {
   const formData = new FormData()
 
-  formData.append('image', file)
+  formData.append('coverImage', file)
 
-  return api<UploadImageResponse>('/api/uploads/image', {
+  return api<UploadImageResponse>(`/uploads/image${buildQuery(query)}`, {
     method: 'POST',
     body: formData,
   })
+}
+
+export const deleteImage = (
+  fileName: string,
+  query?: ImageQuery
+): Promise<UploadImageResponse> => {
+  return api<UploadImageResponse>(
+    `/uploads/image/delete/${fileName}${buildQuery(query)}`,
+    {
+      method: 'DELETE',
+    }
+  )
 }

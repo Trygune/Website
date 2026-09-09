@@ -9,6 +9,7 @@ import {
 import { cn, formatDate, getSortIcon } from '@/lib/utils'
 import { Project, ProjectSort, ProjectSortField } from '@/types/project'
 import { ArrowUpRight, FolderKanban, Pencil, Trash2 } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 
 type ProjectTableProps = {
@@ -115,11 +116,14 @@ const ProjectTable = ({
                   <div className="flex min-w-0 items-center gap-3">
                     {/* Image */}
                     {project.coverImage ? (
-                      <img
-                        src={project.coverImage}
-                        alt=""
-                        className="size-11 shrink-0 rounded-lg border object-cover"
-                      />
+                      <div className="relative size-11">
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_API_URL}${project.coverImage}`}
+                          fill
+                          alt=""
+                          className="shrink-0 rounded-lg border object-cover"
+                        />
+                      </div>
                     ) : (
                       <div className="flex size-11 shrink-0 items-center justify-center rounded-lg border bg-muted/30">
                         <FolderKanban className="size-4 text-muted-foreground" />

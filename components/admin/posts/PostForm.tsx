@@ -17,6 +17,7 @@ const PostForm = ({ initialData, isEditing = false }: PostFormProps) => {
   const [status, setStatus] = useState<Post['status']>(
     initialData?.status ?? 'draft'
   )
+  const [coverImage, setCoverImage] = useState(initialData?.coverImage ?? '')
 
   const createMutation = useCreatePost()
   const updateMutation = useUpdatePost()
@@ -28,6 +29,7 @@ const PostForm = ({ initialData, isEditing = false }: PostFormProps) => {
     const formData = new FormData(event.currentTarget)
 
     formData.set('status', status)
+    formData.set('coverImage', coverImage)
 
     try {
       if (isEditing && initialData) {
@@ -51,6 +53,7 @@ const PostForm = ({ initialData, isEditing = false }: PostFormProps) => {
         initialData={initialData}
         status={status}
         onStatusChange={setStatus}
+        onImageChange={setCoverImage}
       />
 
       {/* Actions */}

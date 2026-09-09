@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { ImagePlus, Loader2, Trash2, Upload } from 'lucide-react'
+import { deleteImage, uploadImage } from '@/services/upload'
 
 type ImageUploadProps = {
   value?: string
@@ -9,7 +10,10 @@ type ImageUploadProps = {
   label?: string
   description?: string
   accept?: string
+  folder?: 'projects' | 'posts' | 'avatars'
 }
+
+const backendUrl = process.env.NEXT_PUBLIC_API_URL
 
 const ImageUpload = ({
   value,
@@ -17,11 +21,16 @@ const ImageUpload = ({
   label = 'Image',
   description = 'Upload an image or provide an image URL.',
   accept = 'image/*',
+  folder,
 }: ImageUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const [preview, setPreview] = useState(value ?? '')
+  const [preview, setPreview] = useState(value ? `${backendUrl}${value}` : '')
   const [isUploading, setIsUploading] = useState(false)
+  const [imageUrl, setImageUrl] = useState(value ?? '')
+  const [filename, setFilename] = useState(
+    value ? (value.split('/').pop() ?? '') : ''
+  )
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -30,37 +39,48 @@ const ImageUpload = ({
 
     if (!file) return
 
+    const oldFilename = filename
+
     setIsUploading(true)
 
     try {
-      /*
-       * Temporary preview.
-       *
-       * Later this will be replaced with:
-       *
-       * const formData = new FormData()
-       * formData.append('image', file)
-       *
-       * const response = await uploadImage(formData)
-       *
-       * onChange?.(response.url)
-       */
+      const response = await uploadImage(file, { for: folder })
 
-      const previewUrl = URL.createObjectURL(file)
+      const newFilename = response.data.filename
+      const newUrl = response.data.url
 
-      setPreview(previewUrl)
-      onChange?.(previewUrl)
+      setFilename(newFilename)
+      setImageUrl(newUrl)
+      setPreview(`${backendUrl}${newUrl}`)
+      onChange?.(newUrl)
+
+      if (oldFilename) {
+        await deleteImage(oldFilename, { for: folder })
+      }
+    } catch (error) {
+      console.error('Image upload failed:', error)
+      setPreview(value ?? '')
     } finally {
       setIsUploading(false)
     }
   }
 
-  const handleRemove = () => {
-    setPreview('')
-    onChange?.('')
+  const handleRemove = async () => {
+    try {
+      if (filename) {
+        await deleteImage(filename, { for: folder })
+      }
 
-    if (inputRef.current) {
-      inputRef.current.value = ''
+      setFilename('')
+      setPreview('')
+      setImageUrl('')
+      onChange?.('')
+    } catch (error) {
+      console.log('remove error', error)
+    } finally {
+      if (inputRef.current) {
+        inputRef.current.value = ''
+      }
     }
   }
 
@@ -74,7 +94,7 @@ const ImageUpload = ({
       </div>
 
       {/* Preview */}
-      {preview ? (
+      {imageUrl ? (
         <div className="relative overflow-hidden rounded-xl border bg-muted/20">
           <div className="aspect-video w-full">
             <img src={preview} alt="" className="size-full object-cover" />
@@ -154,9 +174,15 @@ const ImageUpload = ({
         <input
           id="image-url"
           type="text"
-          value={preview.startsWith('blob:') ? '' : preview}
+          value={imageUrl}
           onChange={(event) => {
-            setPreview(event.target.value)
+            const url = event.target.value
+
+            setImageUrl(url)
+
+            const constructedUrl = `${backendUrl}${url}`
+
+            setPreview(constructedUrl)
             onChange?.(event.target.value)
           }}
           placeholder="example.com/image.jpg"

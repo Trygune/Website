@@ -23,8 +23,6 @@ const ProjectCard = ({
   live,
   featured = false,
 }: ProjectCardProps) => {
-  console.log(image)
-
   return (
     <article className={featured ? 'lg:col-span-2' : ''}>
       {/* Preview */}

@@ -30,6 +30,7 @@ type PostFormFieldsProps = {
   initialData?: Post
   status: Post['status']
   onStatusChange: (status: Post['status']) => void
+  onImageChange: (url: string) => void
 }
 
 const categories = [
@@ -60,6 +61,7 @@ const PostFormFields = ({
   status: stat,
   onStatusChange,
   initialData,
+  onImageChange,
 }: PostFormFieldsProps) => {
   const [tags, setTags] = useState<string[]>(initialData?.tags ?? [])
   return (
@@ -255,6 +257,8 @@ const PostFormFields = ({
             value={initialData?.coverImage}
             label="Cover image"
             description="This image will be displayed as the cover of your blog post."
+            onChange={onImageChange}
+            folder="posts"
           />
         </div>
       </section>
