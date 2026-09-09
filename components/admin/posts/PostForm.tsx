@@ -17,7 +17,12 @@ const PostForm = ({ initialData, isEditing = false }: PostFormProps) => {
   const [status, setStatus] = useState<Post['status']>(
     initialData?.status ?? 'draft'
   )
-  const [coverImage, setCoverImage] = useState(initialData?.coverImage ?? '')
+  const [coverImage, setCoverImage] = useState(
+    initialData?.coverImage ?? {
+      url: '',
+      publicId: '',
+    }
+  )
 
   const createMutation = useCreatePost()
   const updateMutation = useUpdatePost()
@@ -29,7 +34,7 @@ const PostForm = ({ initialData, isEditing = false }: PostFormProps) => {
     const formData = new FormData(event.currentTarget)
 
     formData.set('status', status)
-    formData.set('coverImage', coverImage)
+    formData.set('coverImage', JSON.stringify(coverImage))
 
     try {
       if (isEditing && initialData) {

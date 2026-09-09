@@ -11,7 +11,7 @@ import {
   FieldLegend,
   FieldSet,
 } from '@/components/ui/field'
-
+import type { Image } from '@/types/image'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -30,7 +30,7 @@ type PostFormFieldsProps = {
   initialData?: Post
   status: Post['status']
   onStatusChange: (status: Post['status']) => void
-  onImageChange: (url: string) => void
+  onImageChange: (image: Image) => void
 }
 
 const categories = [

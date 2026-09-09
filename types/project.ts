@@ -1,3 +1,5 @@
+import { Image } from './image'
+
 export type ProjectStatus = 'draft' | 'published'
 
 export type Project = {
@@ -15,7 +17,7 @@ export type Project = {
     challenge: string
     solution: string
   }[]
-  coverImage?: string
+  coverImage?: Image
   githubUrl?: string
   liveUrl?: string
   featured?: boolean

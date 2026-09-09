@@ -118,10 +118,10 @@ const PostTable = ({ posts, onDelete, sort, onSort }: PostTableProps) => {
                 <TableCell className="px-5 py-4">
                   <div className="flex min-w-0 items-center gap-3">
                     {/* Image */}
-                    {post.coverImage ? (
+                    {post.coverImage?.url ? (
                       <div className="relative size-11">
                         <Image
-                          src={`${process.env.NEXT_PUBLIC_API_URL}${post.coverImage}`}
+                          src={post.coverImage.url}
                           fill
                           alt=""
                           className="shrink-0 rounded-lg border object-cover"

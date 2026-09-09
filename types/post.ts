@@ -1,3 +1,5 @@
+import { Image } from './image'
+
 export type PostStatus = 'draft' | 'published'
 
 export type Post = {
@@ -7,7 +9,7 @@ export type Post = {
   excerpt: string
   content: string
   readTime: string
-  coverImage?: string
+  coverImage?: Image
   category: string
   tags: string[]
   status: PostStatus

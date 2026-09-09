@@ -68,7 +68,7 @@ const ProjectDetails = ({ project }: ProjectDetailsProps) => {
       {/* Hero image */}
       <div className="relative mt-16 aspect-video overflow-hidden rounded-2xl border bg-muted">
         <Image
-          src={`${process.env.NEXT_PUBLIC_API_URL}${project.coverImage ?? '/uploads/images/sample.jpg'}`}
+          src={project.coverImage?.url ?? '/uploads/images/sample.jpg'}
           alt={`${project.title} preview`}
           fill
           priority

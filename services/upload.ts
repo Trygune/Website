@@ -4,9 +4,13 @@ import { api } from './api'
 type UploadImageResponse = {
   success: boolean
   data: {
-    filename: string
     url: string
+    publicId: string
   }
+}
+
+type DeleteImageResponse = {
+  success: boolean
 }
 
 type ImageQuery = {
@@ -27,14 +31,14 @@ export const uploadImage = (
   })
 }
 
-export const deleteImage = (
-  fileName: string,
-  query?: ImageQuery
-): Promise<UploadImageResponse> => {
-  return api<UploadImageResponse>(
-    `/uploads/image/delete/${fileName}${buildQuery(query)}`,
-    {
-      method: 'DELETE',
-    }
-  )
+export const deleteImage = (publicId: string): Promise<DeleteImageResponse> => {
+  return api<DeleteImageResponse>('/uploads/image', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      publicId,
+    }),
+  })
 }

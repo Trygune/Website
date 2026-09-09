@@ -20,7 +20,12 @@ const ProjectForm = ({ initialData, isEditing = false }: ProjectFormProps) => {
   )
 
   const [featured, setFeatured] = useState(initialData?.featured ?? false)
-  const [coverImage, setCoverImage] = useState(initialData?.coverImage ?? '')
+  const [coverImage, setCoverImage] = useState(
+    initialData?.coverImage ?? {
+      url: '',
+      publicId: '',
+    }
+  )
 
   const createMutation = useCreateProject()
   const updateMutation = useUpdateProject()
@@ -34,7 +39,7 @@ const ProjectForm = ({ initialData, isEditing = false }: ProjectFormProps) => {
 
     formData.set('status', status)
     formData.set('featured', String(!!featured))
-    formData.set('coverImage', coverImage)
+    formData.set('coverImage', JSON.stringify(coverImage))
 
     try {
       if (isEditing && initialData) {

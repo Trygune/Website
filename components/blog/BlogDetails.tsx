@@ -34,7 +34,7 @@ const BlogDetails = ({ post }: BlogDetailsProps) => {
 
         <div className="relative mt-8 aspect-video overflow-hidden rounded-2xl border bg-muted">
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}${post.coverImage ?? '/uploads/images/sample.jpg'}`}
+            src={post.coverImage?.url ?? '/uploads/images/sample.jpg'}
             alt={`${post.title} preview`}
             fill
             priority

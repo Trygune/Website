@@ -14,7 +14,7 @@ const ProjectGrid = ({ projects, page = 'full' }: ProjectGridProps) => {
           key={`${project.slug}-${project.id}-${index}`}
           title={project.title}
           description={project.description}
-          image={`${process.env.NEXT_PUBLIC_API_URL}${project.coverImage ?? '/uploads/images/sample.jpg'}`}
+          image={project.coverImage?.url ?? '/uploads/images/sample.jpg'}
           technologies={project.technologies}
           href={`/projects/${project.slug}`}
           github={project.githubUrl}

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
-
+import type { Image } from '@/types/image'
 import { Project } from '@/types/project'
 import ImageUpload from '../shared/ImageUpload'
 
@@ -30,7 +30,7 @@ type ProjectFormFieldsProps = {
   featured: boolean
   onStatusChange: (status: Project['status']) => void
   onFeaturedChange: (featured: boolean) => void
-  onImageChange: (url: string) => void
+  onImageChange: (image: Image) => void
 }
 
 const inputClassName = 'h-11 rounded-lg bg-background'
