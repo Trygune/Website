@@ -4,11 +4,15 @@ import { useRef, useState } from 'react'
 import { ImagePlus, Loader2, Trash2, Upload } from 'lucide-react'
 
 import { deleteImage, uploadImage } from '@/services/upload'
-import type { Image } from '@/types/image'
+import type { Image as ImageProps } from '@/types/image'
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 
 type ImageUploadProps = {
-  value?: Image
-  onChange?: (image: Image) => void
+  value?: ImageProps
+  onChange?: (image: ImageProps) => void
   label?: string
   description?: string
   accept?: string
@@ -27,7 +31,6 @@ const ImageUpload = ({
 
   const [preview, setPreview] = useState(value?.url ?? '')
   const [isUploading, setIsUploading] = useState(false)
-  const [imageUrl, setImageUrl] = useState(value?.url ?? '')
   const [publicId, setPublicId] = useState(value?.publicId ?? '')
 
   const handleFileChange = async (
@@ -46,13 +49,12 @@ const ImageUpload = ({
         for: folder,
       })
 
-      const newImage: Image = {
+      const newImage: ImageProps = {
         url: response.data.url,
         publicId: response.data.publicId,
       }
 
       setPublicId(newImage.publicId)
-      setImageUrl(newImage.url)
       setPreview(newImage.url)
 
       onChange?.(newImage)
@@ -62,8 +64,6 @@ const ImageUpload = ({
       }
     } catch (error) {
       console.error('Image upload failed:', error)
-
-      setPreview(imageUrl)
     } finally {
       setIsUploading(false)
 
@@ -81,7 +81,6 @@ const ImageUpload = ({
 
       setPublicId('')
       setPreview('')
-      setImageUrl('')
 
       onChange?.({
         url: '',
@@ -100,21 +99,26 @@ const ImageUpload = ({
     <div className="space-y-3">
       {/* Label */}
       <div>
-        <label className="text-sm font-medium">{label}</label>
+        <Label className="text-sm font-medium">{label}</Label>
 
         <p className="mt-1 text-xs text-muted-foreground">{description}</p>
       </div>
 
       {/* Preview */}
-      {imageUrl ? (
+      {preview ? (
         <div className="relative overflow-hidden rounded-xl border bg-muted/20">
-          <div className="aspect-video w-full">
-            <img src={preview} alt="" className="size-full object-cover" />
+          <div className="relative aspect-video w-full">
+            <Image
+              src={preview}
+              alt=""
+              fill
+              className="size-full object-cover"
+            />
           </div>
 
           {/* Overlay */}
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-black/60 p-3">
-            <button
+            <Button
               type="button"
               onClick={() => inputRef.current?.click()}
               disabled={isUploading}
@@ -126,17 +130,18 @@ const ImageUpload = ({
                 <Upload className="size-4" />
               )}
               Replace
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
+              variant="destructive"
               onClick={handleRemove}
               disabled={isUploading}
               className="inline-flex h-9 items-center gap-2 rounded-lg bg-destructive/80 px-3 text-xs font-medium text-white transition-colors hover:bg-destructive disabled:opacity-50"
             >
               <Trash2 className="size-4" />
               Remove
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
@@ -176,21 +181,20 @@ const ImageUpload = ({
 
       {/* URL fallback */}
       <div className="space-y-2">
-        <label
+        <Label
           htmlFor="image-url"
           className="text-xs font-medium text-muted-foreground"
         >
           Or use an image URL
-        </label>
+        </Label>
 
-        <input
+        <Input
           id="image-url"
           type="text"
-          value={imageUrl}
+          value={preview}
           onChange={(event) => {
             const url = event.target.value
 
-            setImageUrl(url)
             setPreview(url)
             setPublicId('')
 
@@ -200,7 +204,6 @@ const ImageUpload = ({
             })
           }}
           placeholder="https://example.com/image.jpg"
-          className="h-10 w-full rounded-lg border bg-transparent px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
         />
       </div>
     </div>

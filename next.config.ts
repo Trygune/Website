@@ -15,7 +15,6 @@ const nextConfig: NextConfig = {
         pathname: '/sg0anr8t/**',
       },
     ],
-    dangerouslyAllowLocalIP: true,
   },
 }
 
