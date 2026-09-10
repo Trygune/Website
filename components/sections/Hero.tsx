@@ -1,8 +1,6 @@
-'use client'
-
 import Link from 'next/link'
 import { ArrowDown, ArrowUpRight } from 'lucide-react'
-import { motion } from 'motion/react'
+import * as motion from 'motion/react-client'
 import GithubIcon from '../icons/GithubIcon'
 import LinkedinIcon from '../icons/LinkedinIcon'
 
